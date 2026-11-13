@@ -1,3 +1,5 @@
+<img src="docs/logo.png" alt="Proof of Thesis" width="520">
+
 # Proof of Thesis
 
 **A NEAR investment thesis that grades itself every day.**

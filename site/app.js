@@ -69,7 +69,6 @@ function render(d) {
   parts.push(v.broken ? `${v.broken} broken` : "none broken");
   $("#verdict-sub").textContent = parts.join(", ") + ".";
   document.documentElement.dataset.tone = v.tone;
-  shader.setTone(v.tone);
 
   const banner = $("#banner");
   if (d.fixture) {
@@ -94,9 +93,16 @@ function render(d) {
     if (!seen.has(s.provider)) seen.set(s.provider, []);
     seen.get(s.provider).push(s.label);
   }
+  const ICON = {
+    "DefiLlama": '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 15l4-5 3 3 7-8"/><path d="M3 18h14"/></svg>',
+    "DefiLlama coins": '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="7"/><path d="M10 6v8M7.5 8.2c0-1 1-1.7 2.5-1.7s2.5.6 2.5 1.6-1 1.4-2.5 1.7-2.5.8-2.5 1.8 1 1.6 2.5 1.6 2.5-.7 2.5-1.6"/></svg>',
+    "NEAR RPC": '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="14" height="5" rx="1.5"/><rect x="3" y="12" width="14" height="5" rx="1.5"/><path d="M6 5.5h.01M6 14.5h.01"/></svg>',
+  };
+  const fallback = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="14" height="14" rx="3"/></svg>';
   $("#sources").innerHTML = [...seen.entries()]
-    .map(([p, ls]) => `<li title="${esc(ls.join(", "))}">${esc(p)}<small>${ls.length} series</small></li>`).join("");
+    .map(([p, ls]) => `<li title="${esc(ls.join(", "))}">${ICON[p] || fallback}${esc(p)}<small>${ls.length} series</small></li>`).join("");
 
+  renderHero(d);
   renderClaims(d);
   renderRecord(d);
   renderKill(d);
@@ -105,13 +111,80 @@ function render(d) {
   renderScenario();
 }
 
+function renderHero(d) {
+  const m = d.metrics, v = d.verdict;
+  $("#pill-text").textContent = `Graded ${date(d.asOf)}: ${v.label.toLowerCase().replace(/^thesis/, "thesis")}`;
+  $("#pill-dot").style.background = `var(--${v.tone})`;
+  $("#hero-cov").textContent = pct(m.coverage, 1);
+  $("#hero-vol").textContent = usd(m.dailyVolNow) + "/day";
+  $("#hero-need").textContent = usd(m.deflationDailyVolume) + "/day";
+  $("#stat-holding").textContent = `${v.holding}/${d.claims.length}`;
+  $("#stat-cover").textContent = pct(m.coverage, 0);
+  $("#stat-vol").textContent = usd(m.dailyVolNow);
+  $("#stat-mult").textContent = m.deflationMultiple == null ? "n/a" : m.deflationMultiple <= 1 ? "None" : m.deflationMultiple.toFixed(1) + "x";
+  coverChart($("#hero-cov-chart"), d.history);
+  ring($("#ring"), d);
+}
+
+function coverChart(host, H) {
+  const pts = H.filter((h) => h.coverage != null && isFinite(h.coverage));
+  if (pts.length < 2) { host.innerHTML = ""; return; }
+  const W = host.clientWidth || 480, Ht = host.clientHeight || 170, L = 40, R = 6, T = 8, B = 22;
+  const max = Math.max(...pts.map((p) => p.coverage)) * 1.15 || 1;
+  const ticks = niceTicks(0, max, 3);
+  const top = Math.max(max, ticks.at(-1));
+  const x = (i) => L + (i / (pts.length - 1)) * (W - L - R);
+  const y = (v) => T + (1 - v / top) * (Ht - T - B);
+  const line = pts.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.coverage).toFixed(1)}`).join("");
+  const area = line + `L${x(pts.length - 1)},${y(0)}L${x(0)},${y(0)}Z`;
+  const last = pts.length - 1;
+  host.innerHTML = `<svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Buyback coverage of issuance went from ${pct(pts[0].coverage, 1)} on ${pts[0].date} to ${pct(pts[last].coverage, 1)} on ${pts[last].date}.">
+    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9d8cff" stop-opacity=".35"/><stop offset="1" stop-color="#9d8cff" stop-opacity="0"/></linearGradient></defs>
+    <g class="grid">${ticks.map((t) => `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}"/>`).join("")}</g>
+    ${ticks.map((t) => `<text class="axis-t" x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${pct(t, 0)}</text>`).join("")}
+    <text class="axis-t" x="${L}" y="${Ht - 4}">${shortDate(pts[0].date)}</text>
+    <text class="axis-t" x="${W - R}" y="${Ht - 4}" text-anchor="end">${shortDate(pts[last].date)}</text>
+    <path d="${area}" fill="url(#cg)"/>
+    <path d="${line}" class="ln" stroke="var(--iris)"/>
+    <circle cx="${x(last)}" cy="${y(pts[last].coverage)}" r="5" fill="var(--iris)" stroke="#0c0b1a" stroke-width="2"/>
+    <line class="hair" x1="0" x2="0" y1="${T}" y2="${Ht - B}" stroke="rgba(255,255,255,.3)" visibility="hidden"/>
+    <circle class="hdot" r="5" fill="var(--iris)" stroke="#0c0b1a" stroke-width="2" visibility="hidden"/>
+  </svg>`;
+  const svg = host.querySelector("svg"), hair = svg.querySelector(".hair"), dot = svg.querySelector(".hdot");
+  svg.onpointermove = (e) => {
+    const r = svg.getBoundingClientRect();
+    const px = ((e.clientX - r.left) / r.width) * W;
+    const i = Math.max(0, Math.min(last, Math.round(((px - L) / (W - L - R)) * last)));
+    for (const a of ["x1", "x2"]) hair.setAttribute(a, x(i));
+    dot.setAttribute("cx", x(i)); dot.setAttribute("cy", y(pts[i].coverage));
+    hair.setAttribute("visibility", "visible"); dot.setAttribute("visibility", "visible");
+    showTip(`<b>${pct(pts[i].coverage, 1)}</b> of issuance bought back<br><span class="muted">Week of ${shortDate(pts[i].date)}</span>`, e.clientX, e.clientY);
+  };
+  svg.onpointerleave = () => { hair.setAttribute("visibility", "hidden"); dot.setAttribute("visibility", "hidden"); hideTip(); };
+}
+
+function ring(host, d) {
+  const n = d.claims.length, R = 80, C = 2 * Math.PI * R, gap = 6;
+  const seg = C / n - gap;
+  const label = { holding: "Intact", weakening: "Under pressure", broken: "Broken" }[d.verdict.tone];
+  host.setAttribute("aria-label", `Verdict ring: ${d.claims.map((c) => `${c.title}, ${STATUS[c.status]}`).join("; ")}`);
+  host.innerHTML = `<svg viewBox="0 0 200 200" aria-hidden="true">
+    <circle cx="100" cy="100" r="${R}" fill="none" stroke="rgba(190,182,255,.08)" stroke-width="14"/>
+    ${d.claims.map((c, i) => `<circle class="seg" cx="100" cy="100" r="${R}" fill="none" stroke="var(--${c.status})" stroke-width="14"
+        stroke-dasharray="${seg} ${C - seg}" stroke-dashoffset="${REDUCE ? -(i * C / n) : -(i * C / n) + seg}" data-off="${-(i * C / n)}" transform="rotate(-90 100 100)"><title>${esc(c.title)}: ${STATUS[c.status]}</title></circle>`).join("")}
+    <text x="100" y="96" text-anchor="middle" fill="var(--ink)" style="font:600 22px var(--sans);letter-spacing:-.03em">${label}</text>
+    <text x="100" y="120" text-anchor="middle" fill="var(--ink-3)" style="font:12px var(--sans)">${d.verdict.holding} of ${n} holding</text>
+  </svg>`;
+  onceVisible(host, () => host.querySelectorAll(".seg").forEach((s, i) => setTimeout(() => s.setAttribute("stroke-dashoffset", s.dataset.off), i * 120)), 0.4);
+}
+
 function renderClaims(d) {
   const grid = $("#claim-grid");
   grid.innerHTML = "";
   for (const c of d.claims) {
     const card = el("article", { class: "claim", id: `claim-${c.id}` });
     card.style.setProperty("--c", `var(--${c.status})`);
-    card.classList.add("glass");
+    card.classList.add("panel");
     card.innerHTML = `
       <span class="scan" aria-hidden="true"></span>
       <p class="status">${REDUCE ? glyph(c.status) + STATUS[c.status] : '<span class="glyph s-pending" aria-hidden="true"></span>Grading…'}</p>
@@ -326,7 +399,7 @@ const cardObserver = "IntersectionObserver" in window ? new IntersectionObserver
 document.querySelectorAll(".reveal").forEach((n) => onceVisible(n, () => n.classList.add("in"), 0.15));
 
 const root = document.documentElement;
-const heroCopy = $("#hero-copy"), report = $("#report"), steps = $("#steps"), stepItems = [...document.querySelectorAll(".step")];
+const heroCopy = $("#hero-copy"), bento = $("#bento"), steps = $("#steps"), stepItems = [...document.querySelectorAll(".step")];
 let ticking = false;
 function onScroll() {
   ticking = false;
@@ -335,10 +408,10 @@ function onScroll() {
   root.style.setProperty("--scroll", max > 0 ? Math.min(1, y / max).toFixed(4) : 0);
   if (!REDUCE && y < vh * 1.2) {
     const k = Math.min(1, y / (vh * 0.8));
-    heroCopy.style.transform = `translateY(${y * 0.22}px)`;
-    heroCopy.style.opacity = String(1 - k * 0.9);
-    heroCopy.style.filter = `blur(${k * 6}px)`;
-    report.style.transform = `translateY(${y * -0.06}px) rotateX(${k * 6}deg)`;
+    heroCopy.style.transform = `translateY(${y * 0.18}px)`;
+    heroCopy.style.opacity = String(1 - k * 0.7);
+    const t = Math.min(1, y / (vh * 0.45));
+    bento.style.transform = `rotateX(${(1 - t) * 12}deg) scale(${0.94 + t * 0.06})`;
   }
   // method: the line draws as the section passes the middle of the screen
   const r = steps.getBoundingClientRect();
@@ -372,7 +445,7 @@ document.querySelectorAll(".tabs button").forEach((b) => {
 $("#g-in").addEventListener("input", (e) => { you.g = e.target.value / 100; renderScenario(); });
 $("#k-in").addEventListener("input", (e) => { you.k = e.target.value / 1e4; renderScenario(); });
 let rt;
-addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => DATA && renderScenario(), 150); });
+addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (DATA) { renderScenario(); coverChart($("#hero-cov-chart"), DATA.history); } }, 150); });
 
 async function rerun() {
   const btns = [$("#rerun"), $("#rerun-nav")];
@@ -410,78 +483,6 @@ $("#rerun-nav").addEventListener("click", rerun);
   } else {
     $("#repo-link").href = "https://github.com/";
   }
-})();
-
-// ---------- shader background ----------
-const shader = (() => {
-  const canvas = $("#shader");
-  const gl = canvas.getContext("webgl", { premultipliedAlpha: false, antialias: false });
-  const tones = {
-    holding:   [[0.03, 0.02, 0.10], [0.20, 0.16, 0.62], [0.07, 0.55, 0.47], 0.55],
-    weakening: [[0.05, 0.02, 0.08], [0.33, 0.17, 0.58], [0.78, 0.50, 0.16], 0.85],
-    broken:    [[0.07, 0.01, 0.03], [0.48, 0.08, 0.20], [0.95, 0.30, 0.25], 1.35],
-  };
-  let target = tones.holding, cur = JSON.parse(JSON.stringify(tones.holding));
-  if (!gl) { canvas.style.background = "radial-gradient(120% 80% at 70% 20%, #2a1f7a 0%, #000 60%)"; return { setTone() {} }; }
-  const vs = `attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }`;
-  const fs = `precision mediump float;
-  uniform vec2 r; uniform float t; uniform vec3 c0; uniform vec3 c1; uniform vec3 c2; uniform float agit;
-  float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
-  float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
-    return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
-  float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<5;i++){ v+=a*n(p); p*=2.03; a*=.5; } return v; }
-  void main(){
-    vec2 uv = gl_FragCoord.xy / r.y;
-    float tt = t*0.035*agit;
-    vec2 q = vec2(fbm(uv*1.4 + tt), fbm(uv*1.4 - tt + 3.1));
-    vec2 w = vec2(fbm(uv*1.8 + q*2.2*agit + vec2(1.7,9.2) + tt*1.3), fbm(uv*1.8 + q*2.2 + vec2(8.3,2.8) - tt));
-    float f = fbm(uv*1.2 + w*1.6);
-    vec3 col = mix(c0, c1, smoothstep(.25,.8,f));
-    col = mix(col, c2, smoothstep(.55,.95, f*w.y*1.6));
-    float bands = smoothstep(.0,.9, sin((f+w.x)*14. + t*.15*agit)*.5+.5) * .06;
-    col += bands * c2;
-    vec2 cuv = gl_FragCoord.xy / r;
-    col *= mix(.55, 1.15, smoothstep(1.3, .1, length((cuv - vec2(.7,.75)) * vec2(1.,1.2))));
-    col += (h(gl_FragCoord.xy + t) - .5) * .025;
-    gl_FragColor = vec4(col, 1.);
-  }`;
-  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
-  const prog = gl.createProgram();
-  gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
-  gl.linkProgram(prog); gl.useProgram(prog);
-  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const U = (n) => gl.getUniformLocation(prog, n);
-  const u = { r: U("r"), t: U("t"), c0: U("c0"), c1: U("c1"), c2: U("c2"), agit: U("agit") };
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const resize = () => {
-    const dpr = Math.min(devicePixelRatio || 1, 1.5) * 0.6; // render at reduced res; it's a soft field
-    canvas.width = Math.max(1, canvas.clientWidth * dpr); canvas.height = Math.max(1, canvas.clientHeight * dpr);
-    gl.viewport(0, 0, canvas.width, canvas.height);
-  };
-  resize(); addEventListener("resize", resize);
-  let visible = true;
-  new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(canvas);
-  const t0 = performance.now();
-  const frame = (now) => {
-    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) cur[i][j] += (target[i][j] - cur[i][j]) * 0.03;
-    cur[3] += (target[3] - cur[3]) * 0.03;
-    if (visible) {
-      gl.uniform2f(u.r, canvas.width, canvas.height);
-      gl.uniform1f(u.t, reduce ? 40 : (now - t0) / 1000 + 40);
-      gl.uniform3fv(u.c0, cur[0]); gl.uniform3fv(u.c1, cur[1]); gl.uniform3fv(u.c2, cur[2]); gl.uniform1f(u.agit, cur[3]);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    }
-    if (!reduce) requestAnimationFrame(frame);
-  };
-  requestAnimationFrame(frame);
-  return {
-    setTone(tone) {
-      target = tones[tone] || tones.holding;
-      if (reduce) { cur = JSON.parse(JSON.stringify(target)); requestAnimationFrame(frame); }
-    },
-  };
 })();
 
 // ---------- boot ----------
