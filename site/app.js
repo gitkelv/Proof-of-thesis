@@ -487,7 +487,9 @@ $("#rerun-nav").addEventListener("click", rerun);
     $("#repo-link").href = url;
     $("#clone").textContent = $("#clone").textContent.replace("https://github.com/OWNER/proof-of-thesis", url);
   } else {
-    $("#repo-link").href = "https://github.com/";
+    const url = "https://github.com/gitkelv/Proof-of-thesis";
+    $("#repo-link").href = url;
+    $("#clone").textContent = $("#clone").textContent.replace("https://github.com/OWNER/proof-of-thesis", url);
   }
 })();
 
