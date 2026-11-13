@@ -1,0 +1,16 @@
+{
+  "name": "proof-of-thesis",
+  "version": "1.0.0",
+  "description": "A NEAR investment thesis that grades itself every day against live onchain data.",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "demo": "node scripts/run.mjs --fixture && node scripts/serve.mjs",
+    "live": "node scripts/run.mjs && node scripts/serve.mjs",
+    "refresh": "node scripts/run.mjs",
+    "fixture": "node scripts/make-fixture.mjs",
+    "serve": "node scripts/serve.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

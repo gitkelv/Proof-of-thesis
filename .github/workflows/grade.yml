@@ -1,0 +1,64 @@
+name: Grade the thesis
+
+# Runs the model on live data, commits the result and deploys the dashboard.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * *"   # every day at 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: grade
+  cancel-in-progress: false
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test the model
+        run: npm test
+
+      - name: Fetch live data and grade
+        run: |
+          for i in 1 2 3; do
+            node scripts/run.mjs && exit 0
+            echo "Attempt $i failed, retrying in 30s"; sleep 30
+          done
+          exit 1
+
+      - name: Commit today's grade to the ledger
+        run: |
+          git config user.name "proof-of-thesis-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data
+          if git diff --cached --quiet; then echo "No change"; else
+            git commit -m "Grade: $(node -e "console.log(require('./site/data/latest.json').verdict.label)") ($(date -u +%F)) [skip ci]"
+            git push
+          fi
+
+      - name: Build the site
+        run: |
+          mkdir -p _site
+          cp -r site/* _site/
+          cp -r model _site/model
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

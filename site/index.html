@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proof of Thesis</title>
+<meta name="description" content="A NEAR investment thesis that grades itself every day against live onchain data, with kill criteria for every claim.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%235FD4B0' stroke-width='4'/%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skip" href="#claims">Skip to the claims</a>
+
+<div class="banner" id="banner" hidden></div>
+
+<header class="nav">
+  <a class="wordmark" href="#top" aria-label="Proof of Thesis, home">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" /><path d="M10 16.5l4 4 8-9" /></svg>
+    Proof of Thesis
+  </a>
+  <nav aria-label="Sections">
+    <a href="#claims">Claims</a>
+    <a href="#record">Track record</a>
+    <a href="#scenarios">Scenarios</a>
+    <a href="#method">Method</a>
+  </nav>
+  <button class="btn btn-ghost" id="rerun-nav" type="button">Rerun live</button>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="verdict">
+    <canvas id="shader" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <p class="kicker">NEAR investment thesis, graded <time id="asof">…</time></p>
+      <h1 id="verdict" class="verdict">Grading…</h1>
+      <p class="verdict-sub" id="verdict-sub">&nbsp;</p>
+      <p class="lede">Six claims about why NEAR is worth owning. Each one is tied to a live onchain number and a line that would prove it wrong. The model reruns every day and nobody gets to move the goalposts.</p>
+      <ol class="scorecard" id="scorecard" aria-label="Claim status"></ol>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="#claims">Read the claims</a>
+        <button class="btn btn-ghost" id="rerun" type="button">Rerun it in your browser</button>
+      </div>
+      <p class="run-status" id="run-status" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="sources" aria-label="Data sources">
+    <p>Graded against</p>
+    <ul id="sources"></ul>
+  </section>
+
+  <section class="section" id="claims" aria-labelledby="claims-h">
+    <div class="section-head">
+      <h2 id="claims-h">The claims</h2>
+      <p>Each card shows today's reading, the last six months of it, and the kill criterion written before the data came in.</p>
+    </div>
+    <div class="claims" id="claim-grid"></div>
+  </section>
+
+  <section class="section" id="record" aria-labelledby="record-h">
+    <div class="section-head">
+      <h2 id="record-h">Track record</h2>
+      <p>How the same rules would have graded the thesis every week for the last six months. From launch on, GitHub Actions appends one real reading per day to <code>data/ledger.json</code>, so the history is in git and can't be quietly rewritten.</p>
+    </div>
+    <div class="record-wrap">
+      <div class="record" id="record-grid" role="table" aria-label="Weekly claim status"></div>
+    </div>
+    <ul class="legend" aria-label="Legend">
+      <li><span class="glyph s-holding" aria-hidden="true"></span>Holding</li>
+      <li><span class="glyph s-weakening" aria-hidden="true"></span>Weakening</li>
+      <li><span class="glyph s-broken" aria-hidden="true"></span>Broken</li>
+      <li><span class="glyph s-unknown" aria-hidden="true"></span>No data</li>
+    </ul>
+  </section>
+
+  <section class="section" id="scenarios" aria-labelledby="scen-h">
+    <div class="section-head">
+      <h2 id="scen-h">When does NEAR stop inflating?</h2>
+      <p>NEAR issues new tokens to validators every year. Since February 2026, the share of Intents fees NEAR captures buys NEAR back on the open market. The thesis pays off when buybacks outrun issuance.</p>
+    </div>
+
+    <div class="gap" id="gap">
+      <div class="gap-row">
+        <span class="gap-label">Intents volume today</span>
+        <span class="gap-bar"><span class="gap-fill now" id="gap-now"></span></span>
+        <span class="gap-val" id="gap-now-v"></span>
+      </div>
+      <div class="gap-row">
+        <span class="gap-label">Needed to offset issuance</span>
+        <span class="gap-bar"><span class="gap-fill need" id="gap-need"></span></span>
+        <span class="gap-val" id="gap-need-v"></span>
+      </div>
+      <p class="gap-note" id="gap-note"></p>
+    </div>
+
+    <div class="scen">
+      <div class="tabs" role="tablist" aria-label="Scenario">
+        <button role="tab" id="tab-bear" aria-controls="scen-panel" data-k="bear">Bear</button>
+        <button role="tab" id="tab-base" aria-controls="scen-panel" data-k="base" aria-selected="true">Base</button>
+        <button role="tab" id="tab-bull" aria-controls="scen-panel" data-k="bull">Bull</button>
+        <button role="tab" id="tab-you" aria-controls="scen-panel" data-k="you">Your numbers</button>
+      </div>
+      <div class="scen-panel" id="scen-panel" role="tabpanel">
+        <div class="scen-copy">
+          <p class="scen-note" id="scen-note"></p>
+          <div class="sliders" id="sliders" hidden>
+            <label>Monthly volume growth <output id="g-out"></output>
+              <input type="range" id="g-in" min="-10" max="25" step="0.5"></label>
+            <label>NEAR's capture per $1 of volume <output id="k-out"></output>
+              <input type="range" id="k-in" min="0" max="20" step="0.1"></label>
+          </div>
+          <dl class="scen-figs" id="scen-figs"></dl>
+        </div>
+        <figure class="chart" id="scen-chart">
+          <figcaption>Monthly buybacks against monthly issuance, in USD at today's NEAR price</figcaption>
+          <div class="chart-body" id="scen-svg"></div>
+          <ul class="legend legend-chart">
+            <li><span class="key key-line" aria-hidden="true"></span>Buybacks</li>
+            <li><span class="key key-dash" aria-hidden="true"></span>New issuance</li>
+          </ul>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="method" aria-labelledby="method-h">
+    <div class="section-head">
+      <h2 id="method-h">How it works</h2>
+    </div>
+    <ol class="steps">
+      <li><h3>Fetch</h3><p>Every day at 06:17 UTC a GitHub Action pulls Intents volume, fees, revenue and TVL from DefiLlama, stablecoin supply on NEAR, the NEAR price, and total supply and inflation straight from a NEAR RPC node.</p></li>
+      <li><h3>Measure</h3><p>One pure JavaScript file, <code>model/thesis.mjs</code>, turns the raw series into the metrics. The same file runs in CI, in the tests and in your browser.</p></li>
+      <li><h3>Grade</h3><p>Each claim is graded holding, weakening or broken against fixed thresholds. Two broken claims and the page says the thesis is broken.</p></li>
+      <li><h3>Publish</h3><p>The result is committed to the repo and deployed to this page. Today's reading is added to an append-only ledger.</p></li>
+    </ol>
+
+    <h3 class="table-h">Kill criteria</h3>
+    <div class="table-wrap">
+      <table class="kill">
+        <thead><tr><th scope="col">Claim</th><th scope="col">Measured by</th><th scope="col">Today</th><th scope="col">Proven wrong if</th></tr></thead>
+        <tbody id="kill-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section faq" aria-labelledby="faq-h">
+    <div class="section-head"><h2 id="faq-h">Questions</h2></div>
+    <details><summary>Is this investment advice?</summary><p>No. It's an open model with its assumptions in plain sight. It tells you which parts of a common NEAR bull case the data supports today and which it doesn't. Do your own research.</p></details>
+    <details><summary>Why would a thesis page admit it's weak?</summary><p>A thesis that can't fail tells you nothing. Writing down the kill line in advance is what separates analysis from marketing. If the buyback claim is weak today, the page says so and shows how much growth would fix it.</p></details>
+    <details><summary>I disagree with a threshold. What do I do?</summary><p>Edit the <code>CLAIMS</code> list in <code>model/thesis.mjs</code> and run <code>npm run live</code>. Every grade on this page updates. Or move the sliders under Your numbers to test your own growth and capture assumptions.</p></details>
+    <details><summary>What does "Rerun it in your browser" do?</summary><p>It downloads fresh data from DefiLlama and a NEAR RPC node directly into your browser and runs the same model file locally. No server of ours sits in between, so you can check that the published grades aren't edited by hand.</p></details>
+    <details><summary>What are the known gaps?</summary><p>The buyback figure uses DefiLlama's holders-revenue series. Issuance uses the onchain maximum inflation rate, which slightly overstates real issuance when validators miss blocks. Past supply is estimated by rolling today's onchain supply back at the inflation rate. The projections hold the NEAR price flat.</p></details>
+  </section>
+
+  <section class="section cta" aria-labelledby="cta-h">
+    <h2 id="cta-h">Reproduce every number on this page</h2>
+    <p>No API keys, no installs beyond Node 18.</p>
+    <pre><code id="clone">git clone https://github.com/OWNER/proof-of-thesis
+cd proof-of-thesis
+npm test
+npm run live</code></pre>
+    <a class="btn btn-solid" id="repo-link" href="#">View the code on GitHub</a>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Built for NEAR HACKATHON 2026. Not financial advice. Model <span id="ver"></span>, data as of <span id="foot-asof"></span>.</p>
+</footer>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
