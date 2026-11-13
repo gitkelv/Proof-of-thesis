@@ -10,7 +10,7 @@ Most investment theses are written once and never checked again. This one has si
 
 It doesn't hide the weak parts. If NEAR's buybacks only cover a small slice of token issuance, the page says so, and shows how much Intents volume growth it would take to close the gap.
 
-- **Live dashboard:** `https://<owner>.github.io/proof-of-thesis/` (deployed by `.github/workflows/grade.yml`)
+- **Live dashboard:** deployed from this repo (GitHub Pages via `.github/workflows/grade.yml`, or any static host with `npm run build` → `_site/`; `netlify.toml` and `vercel.json` are included)
 - **Model:** [`model/thesis.mjs`](model/thesis.mjs). One dependency-free file that runs in CI, in the tests and in the browser.
 
 ## The six claims
@@ -31,7 +31,7 @@ Two broken claims and the verdict becomes **Thesis broken**. The thresholds are 
 Needs Node 18 or newer. No API keys, no `npm install` (there are no dependencies).
 
 ```bash
-git clone https://github.com/<owner>/proof-of-thesis
+git clone https://github.com/gitkelv/Proof-of-thesis
 cd proof-of-thesis
 ```
 

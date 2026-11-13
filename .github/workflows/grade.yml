@@ -4,6 +4,7 @@ name: Grade the thesis
 on:
   push:
     branches: [main]
+    paths-ignore: ["site/data/**"]
   schedule:
     - cron: "17 6 * * *"   # every day at 06:17 UTC
   workflow_dispatch:
@@ -46,19 +47,23 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add site/data
           if git diff --cached --quiet; then echo "No change"; else
-            git commit -m "Grade: $(node -e "console.log(require('./site/data/latest.json').verdict.label)") ($(date -u +%F)) [skip ci]"
+            git commit -m "Grade: $(node -e "console.log(require('./site/data/latest.json').verdict.label)") ($(date -u +%F))"
             git push
           fi
 
       - name: Build the site
-        run: |
-          mkdir -p _site
-          cp -r site/* _site/
-          cp -r model _site/model
+        run: npm run build
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      # GitHub Pages is optional: if it isn't enabled (Settings > Pages > Source:
+      # GitHub Actions), the data commit above still lands and hosts like
+      # Netlify or Vercel redeploy from it.
+      - id: pages
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+      - if: steps.pages.outcome == 'success'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: _site
       - id: deploy
+        if: steps.pages.outcome == 'success'
         uses: actions/deploy-pages@v4
