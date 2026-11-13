@@ -4,7 +4,9 @@
 
 **A NEAR investment thesis that grades itself every day.**
 
-Track: **Investment Thesis**, NEAR HACKATHON 2026.
+Track: **Investment Thesis**, NEAR HACKATHON 2026. **Live:** https://proof-of-thesis.netlify.app
+
+![Proof of Thesis: today's grade and the buyback trend](docs/screens/1-hero.jpg)
 
 Most investment theses are written once and never checked again. This one has six claims about why NEAR is worth owning. Each claim is tied to a live onchain number and a **kill criterion** written down in advance, a line that would prove it wrong. Every day a GitHub Action pulls fresh data, reruns the model, grades each claim as **holding**, **weakening** or **broken**, appends the result to an append-only ledger in git, and redeploys the dashboard.
 
@@ -12,6 +14,38 @@ It doesn't hide the weak parts. If NEAR's buybacks only cover a small slice of t
 
 - **Live dashboard:** https://proof-of-thesis.netlify.app (mirror: https://gitkelv.github.io/Proof-of-thesis/). Both redeploy automatically after each daily run.
 - **Model:** [`model/thesis.mjs`](model/thesis.mjs). One dependency-free file that runs in CI, in the tests and in the browser.
+
+## What it looks like
+
+Screenshots from the live site, graded on real data from 12 November 2026.
+
+**Today's verdict.** Six claims roll up into one verdict, with the four numbers that matter most.
+
+![Verdict ring and headline stats](docs/screens/2-verdict.jpg)
+
+**Every claim, with its kill line.** Each card shows today's reading, six months of history, and a red dashed line marking the value that would prove it wrong.
+
+![Six claim cards with sparklines and kill lines](docs/screens/3-claims.jpg)
+
+**A track record that can't be rewritten.** The same rules replayed weekly for 26 weeks. From launch on, every daily run is appended to `site/data/ledger.json` in git.
+
+![26-week track record grid](docs/screens/4-track-record.jpg)
+
+**When does NEAR stop inflating?** Today's Intents volume against the volume needed for buybacks to outrun issuance, projected under bear, base and bull growth.
+
+![Deflation gap and 36-month projection](docs/screens/5-scenarios.jpg)
+
+**Your numbers.** Drag the sliders to test your own growth and capture assumptions; every figure updates instantly.
+
+![Your numbers tab with sliders](docs/screens/5b-your-numbers.jpg)
+
+**Method and kill criteria.** The daily pipeline, and every threshold in one table.
+
+![How it works and the kill criteria table](docs/screens/6-method.jpg)
+
+**On a phone.**
+
+![Mobile views](docs/screens/7-mobile.jpg)
 
 ## The six claims
 
