@@ -1,6 +1,8 @@
 import { project, MODEL_VERSION } from "./model/thesis.mjs";
 
 const $ = (s) => document.querySelector(s);
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (!REDUCE) document.body.classList.add("js-motion");
 const el = (tag, attrs = {}, html = "") => {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
@@ -58,7 +60,10 @@ function render(d) {
   $("#asof").setAttribute("datetime", d.asOf);
   $("#foot-asof").textContent = date(d.asOf);
   $("#ver").textContent = d.modelVersion || MODEL_VERSION;
-  $("#verdict").textContent = v.label + ".";
+  const short = { holding: "Intact", weakening: "Under pressure", broken: "Broken" };
+  $("#verdict").textContent = short[v.tone] || v.label;
+  $("#verdict").style.setProperty("--tone", `var(--${v.tone})`);
+  $("#data-kind").textContent = d.fixture ? "Synthetic demo data" : "Live data";
   const parts = [`${v.holding} of ${d.claims.length} claims holding`];
   if (v.weakening) parts.push(`${v.weakening} weakening`);
   parts.push(v.broken ? `${v.broken} broken` : "none broken");
@@ -76,11 +81,12 @@ function render(d) {
   // scorecard
   const sc = $("#scorecard");
   sc.innerHTML = "";
-  for (const c of d.claims) {
+  d.claims.forEach((c, i) => {
     const li = el("li");
-    li.innerHTML = `<a href="#claim-${c.id}">${glyph(c.status)}<span>${esc(c.title)}</span><span class="sr-only">: ${STATUS[c.status]}</span></a>`;
+    li.innerHTML = `<a href="#claim-${c.id}">${glyph(c.status)}<span class="rl-title">${esc(c.title)}</span><span class="rl-val">${fmtClaim(c, c.value)}</span><span class="sr-only">: ${STATUS[c.status]}</span></a>`;
     sc.append(li);
-  }
+    setTimeout(() => li.classList.add("in"), REDUCE ? 0 : 350 + i * 170);
+  });
 
   // sources
   const seen = new Map();
@@ -105,8 +111,10 @@ function renderClaims(d) {
   for (const c of d.claims) {
     const card = el("article", { class: "claim", id: `claim-${c.id}` });
     card.style.setProperty("--c", `var(--${c.status})`);
+    card.classList.add("glass");
     card.innerHTML = `
-      <p class="status">${glyph(c.status)}${STATUS[c.status]}</p>
+      <span class="scan" aria-hidden="true"></span>
+      <p class="status">${REDUCE ? glyph(c.status) + STATUS[c.status] : '<span class="glyph s-pending" aria-hidden="true"></span>Grading…'}</p>
       <h3>${esc(c.title)}</h3>
       <p class="why">${esc(c.claim)}</p>
       <div class="reading"><span class="value">${fmtClaim(c, c.value)}</span><span class="metric">${esc(c.metric)}</span></div>
@@ -114,6 +122,12 @@ function renderClaims(d) {
       <p class="kill-line">${esc(c.kill)}</p>`;
     grid.append(card);
     spark(card.querySelector(".spark"), d.history, c);
+    card._grade = () => {
+      card.querySelector(".status").innerHTML = glyph(c.status) + STATUS[c.status];
+      card.classList.add("graded");
+    };
+    if (REDUCE) card.classList.add("in", "graded");
+    else cardObserver.observe(card);
   }
 }
 
@@ -159,7 +173,7 @@ function renderRecord(d) {
     r.append(el("div", { class: "rlabel " + cls, role: "rowheader" }, esc(label)));
     H.forEach((h) => {
       const s = statusOf(h);
-      const cell = el("div", { class: "cell " + s, role: "cell", "aria-label": `${label}, week of ${h.date}: ${STATUS[s] || s}` });
+      const cell = el("div", { class: "cell " + s, role: "cell", style: `--i:${H.indexOf(h)}`, "aria-label": `${label}, week of ${h.date}: ${STATUS[s] || s}` });
       cell.addEventListener("pointermove", (e) => showTip(`<b>${esc(label)}</b><br><span class="muted">Week of ${shortDate(h.date)}</span><br>${glyph(s)} ${title(h, s)}`, e.clientX, e.clientY));
       cell.addEventListener("pointerleave", hideTip);
       r.append(cell);
@@ -184,6 +198,7 @@ function renderRecord(d) {
   });
   g.append(ax);
   const wrap = g.parentElement; wrap.scrollLeft = wrap.scrollWidth;
+  if (REDUCE) g.classList.add("in"); else onceVisible(g, () => g.classList.add("in"), 0.3);
 }
 
 function renderKill(d) {
@@ -196,10 +211,10 @@ function renderKill(d) {
 function renderGap(d) {
   const m = d.metrics;
   const max = Math.max(m.dailyVolNow, m.deflationDailyVolume || 0) || 1;
-  requestAnimationFrame(() => {
+  onceVisible($("#gap"), () => {
     $("#gap-now").style.width = (m.dailyVolNow / max) * 100 + "%";
     $("#gap-need").style.width = ((m.deflationDailyVolume || 0) / max) * 100 + "%";
-  });
+  }, 0.5);
   $("#gap-now-v").textContent = usd(m.dailyVolNow) + "/day";
   $("#gap-need-v").textContent = usd(m.deflationDailyVolume) + "/day";
   const mult = m.deflationMultiple;
@@ -289,6 +304,61 @@ function niceTicks(lo, hi, n) {
   return out;
 }
 
+// ---------- scroll effects ----------
+function onceVisible(node, fn, threshold = 0.2) {
+  if (REDUCE || !("IntersectionObserver" in window)) { fn(); return; }
+  const io = new IntersectionObserver((es) => {
+    for (const e of es) if (e.isIntersecting) { io.disconnect(); fn(); }
+  }, { threshold });
+  io.observe(node);
+}
+const cardObserver = "IntersectionObserver" in window ? new IntersectionObserver((es) => {
+  for (const e of es) {
+    if (!e.isIntersecting) continue;
+    const card = e.target;
+    cardObserver.unobserve(card);
+    const delay = [...card.parentElement.children].indexOf(card) % 3 * 140;
+    setTimeout(() => card.classList.add("in"), delay);
+    setTimeout(() => card._grade?.(), delay + 900);
+  }
+}, { threshold: 0.35 }) : { observe: (c) => { c.classList.add("in"); c._grade?.(); } };
+
+document.querySelectorAll(".reveal").forEach((n) => onceVisible(n, () => n.classList.add("in"), 0.15));
+
+const root = document.documentElement;
+const heroCopy = $("#hero-copy"), report = $("#report"), steps = $("#steps"), stepItems = [...document.querySelectorAll(".step")];
+let ticking = false;
+function onScroll() {
+  ticking = false;
+  const y = scrollY, vh = innerHeight;
+  const max = document.documentElement.scrollHeight - vh;
+  root.style.setProperty("--scroll", max > 0 ? Math.min(1, y / max).toFixed(4) : 0);
+  if (!REDUCE && y < vh * 1.2) {
+    const k = Math.min(1, y / (vh * 0.8));
+    heroCopy.style.transform = `translateY(${y * 0.22}px)`;
+    heroCopy.style.opacity = String(1 - k * 0.9);
+    heroCopy.style.filter = `blur(${k * 6}px)`;
+    report.style.transform = `translateY(${y * -0.06}px) rotateX(${k * 6}deg)`;
+  }
+  // method: the line draws as the section passes the middle of the screen
+  const r = steps.getBoundingClientRect();
+  const p = Math.max(0, Math.min(1, (vh * 0.6 - r.top) / r.height));
+  steps.style.setProperty("--p", p.toFixed(3));
+  for (const li of stepItems) li.classList.toggle("on", li.getBoundingClientRect().top < vh * 0.6);
+}
+addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+onScroll();
+
+// countdown to the next daily run (06:17 UTC)
+function nextRun() {
+  const now = new Date();
+  const n = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 6, 17));
+  if (n <= now) n.setUTCDate(n.getUTCDate() + 1);
+  const mins = Math.round((n - now) / 60000);
+  $("#next-run").textContent = `Next grading in ${Math.floor(mins / 60)}h ${String(mins % 60).padStart(2, "0")}m`;
+}
+nextRun(); setInterval(nextRun, 30000);
+
 // ---------- interactions ----------
 document.querySelectorAll(".tabs button").forEach((b) => {
   b.addEventListener("click", () => { activeScenario = b.dataset.k; renderScenario(); });
@@ -371,7 +441,7 @@ const shader = (() => {
     float bands = smoothstep(.0,.9, sin((f+w.x)*14. + t*.15*agit)*.5+.5) * .06;
     col += bands * c2;
     vec2 cuv = gl_FragCoord.xy / r;
-    col *= smoothstep(1.25, .25, length((cuv - vec2(.72,.78)) * vec2(1.,1.3)));
+    col *= mix(.55, 1.15, smoothstep(1.3, .1, length((cuv - vec2(.7,.75)) * vec2(1.,1.2))));
     col += (h(gl_FragCoord.xy + t) - .5) * .025;
     gl_FragColor = vec4(col, 1.);
   }`;

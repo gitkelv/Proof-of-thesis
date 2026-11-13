@@ -43,7 +43,7 @@ cd proof-of-thesis
    Same output, built from real data fetched from DefiLlama and a NEAR RPC node. It writes `site/data/latest.json`, `site/data/snapshot.json` (the raw inputs, so anyone can audit the run) and appends a row to `site/data/ledger.json`.
 
 4. **Open the dashboard.** `npm run serve`, then open http://localhost:4173
-   You should see the verdict as a giant headline over an animated background. The shader turns calm teal when the thesis is intact, amber when it's under pressure and red when it's broken. Below it are six claim cards with six-month sparklines and a dashed red kill line, a 26-week track-record grid, the deflation gap, and scenario tabs.
+   You should see the headline "The NEAR thesis that grades itself." next to a glass **Today's grade** card. Its six claim rows grade one by one and the verdict shows as *Intact*, *Under pressure* or *Broken*. The animated background is calm teal-violet when the thesis is intact, amber under pressure and red when broken. As you scroll, each claim card shows "Grading…" with a scan line, then stamps its status and draws its six-month sparkline against a dashed red kill line. The 26-week track-record grid fills in, the deflation-gap bars grow, and the method timeline lights up step by step. All motion is turned off if your system asks for reduced motion.
 
 5. **Rerun it in your browser.** On the dashboard, press **Rerun it in your browser**.
    The page fetches live data straight from DefiLlama and NEAR RPC and runs the same `model/thesis.mjs` locally. The status line says "Regraded live in your browser at HH:MM". That proves the published grades aren't edited by hand.
@@ -97,7 +97,7 @@ model/sources.mjs    fetchers + parsers for every public source
 scripts/run.mjs      CLI: fetch (or load fixture), grade, write site/data
 scripts/serve.mjs    zero-dependency static server
 scripts/make-fixture.mjs  regenerates the synthetic test fixture
-site/                the dashboard (index.html, style.css, app.js)
+site/                the dashboard (index.html, style.css, app.js, self-hosted fonts)
 test/                node:test suite + synthetic fixture
 .github/workflows/   daily grade + deploy, PR tests
 ```
