@@ -54,9 +54,15 @@ export function parsePrice(json) {
 }
 
 async function getJson(fetchImpl, url, init) {
-  const r = await fetchImpl(url, { ...init, headers: { accept: "application/json", ...(init?.headers || {}) } });
-  if (!r.ok) throw new Error(`${r.status} ${r.statusText} for ${url}`);
-  return r.json();
+  const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timer = ctl ? setTimeout(() => ctl.abort(), 25000) : null;
+  try {
+    const r = await fetchImpl(url, { ...init, signal: ctl?.signal, headers: { accept: "application/json", ...(init?.headers || {}) } });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch (e) {
+    throw new Error(e.name === "AbortError" ? "timed out" : e.message);
+  } finally { if (timer) clearTimeout(timer); }
 }
 
 async function rpc(fetchImpl, method, params) {
@@ -75,36 +81,55 @@ async function rpc(fetchImpl, method, params) {
   throw last;
 }
 
-export async function fetchSnapshot(fetchImpl = globalThis.fetch, { log = () => {} } = {}) {
+// `fallback` (optional): a previous snapshot. If a source fails and a fallback
+// is given, that source's series is taken from the fallback and its name is
+// listed in `stale`. CI runs without a fallback, so any failure fails the run.
+export async function fetchSnapshot(fetchImpl = globalThis.fetch, { log = () => {}, fallback = null } = {}) {
   const start = Math.floor(Date.now() / 1000) - 420 * DAY;
-  const step = async (name, fn) => {
+  const stale = [];
+  const step = async (name, fn, fb) => {
     log(`fetch ${name}`);
-    return fn();
+    try { return await fn(); }
+    catch (e) {
+      const v = fallback && fb ? fb(fallback) : undefined;
+      if (v !== undefined && v !== null) {
+        stale.push(SOURCES[name]?.label || name);
+        log(`${name} unavailable (${e.message}), using the last daily run`);
+        return v;
+      }
+      throw new Error(`${SOURCES[name]?.label || name}: ${e.message}`);
+    }
   };
 
-  const [volume, fees, revenue, holdersRevenue, tvl, stables, priceSeries, block, config] = await Promise.all([
-    step("volume", async () => parseSummary(await getJson(fetchImpl, SOURCES.volume.url))),
-    step("fees", async () => parseSummary(await getJson(fetchImpl, SOURCES.fees.url))),
-    step("revenue", async () => parseSummary(await getJson(fetchImpl, SOURCES.revenue.url))),
+  const [volume, fees, revenue, holdersRevenue, tvl, stables, priceSeries, supply, inflation] = await Promise.all([
+    step("volume", async () => parseSummary(await getJson(fetchImpl, SOURCES.volume.url)), (f) => f.intents.volume),
+    step("fees", async () => parseSummary(await getJson(fetchImpl, SOURCES.fees.url)), (f) => f.intents.fees),
+    step("revenue", async () => parseSummary(await getJson(fetchImpl, SOURCES.revenue.url)), (f) => f.intents.revenue),
     step("holders", async () => {
       try { return parseSummary(await getJson(fetchImpl, SOURCES.holders.url)); }
-      catch (e) { log(`holders revenue unavailable, using revenue: ${e.message}`); return []; }
-    }),
-    step("tvl", async () => parseTvl(await getJson(fetchImpl, SOURCES.tvl.url))),
-    step("stables", async () => parseStables(await getJson(fetchImpl, SOURCES.stables.url))),
-    step("price", async () => parsePrice(await getJson(fetchImpl, SOURCES.price.url + start))),
-    step("block", async () => rpc(fetchImpl, "block", { finality: "final" })),
-    step("config", async () => {
-      try { return await rpc(fetchImpl, "EXPERIMENTAL_protocol_config", { finality: "final" }); }
-      catch (e) { log(`protocol config unavailable: ${e.message}`); return null; }
-    }),
+      catch (e) {
+        if (fallback?.intents?.holdersRevenue?.length) throw e;
+        log(`holders revenue unavailable, using revenue: ${e.message}`); return [];
+      }
+    }, (f) => f.intents.holdersRevenue),
+    step("tvl", async () => parseTvl(await getJson(fetchImpl, SOURCES.tvl.url)), (f) => f.intents.tvl),
+    step("stables", async () => parseStables(await getJson(fetchImpl, SOURCES.stables.url)), (f) => f.stablecoinsNear),
+    step("price", async () => parsePrice(await getJson(fetchImpl, SOURCES.price.url + start)), (f) => f.token.priceSeries),
+    step("chain", async () => {
+      const b = await rpc(fetchImpl, "block", { finality: "final" });
+      // total_supply is in yoctoNEAR (1e24)
+      return { totalSupply: Number(BigInt(b.result.header.total_supply) / 10n ** 18n) / 1e6, ref: `block ${b.result.header.height}`, url: b.url };
+    }, (f) => ({ totalSupply: f.token.totalSupply, ref: f.token.supplySource + " (last daily run)", url: f.sources?.chain?.url || SOURCES.chain.url })),
+    (async () => {
+      try {
+        const c = await rpc(fetchImpl, "EXPERIMENTAL_protocol_config", { finality: "final" });
+        const mir = c.result?.max_inflation_rate;
+        if (Array.isArray(mir) && mir[1]) return { rate: mir[0] / mir[1], source: "EXPERIMENTAL_protocol_config.max_inflation_rate" };
+      } catch (e) { log(`protocol config unavailable: ${e.message}`); }
+      if (fallback?.params?.inflationRate) return { rate: fallback.params.inflationRate, source: fallback.params.inflationSource + " (last daily run)" };
+      return { rate: 0.025, source: "default 2.5%" };
+    })(),
   ]);
-
-  // Onchain: total supply is in yoctoNEAR (1e24).
-  const totalSupply = Number(BigInt(block.result.header.total_supply) / 10n ** 18n) / 1e6;
-  let inflationRate = 0.025;
-  const mir = config?.result?.max_inflation_rate;
-  if (Array.isArray(mir) && mir[1]) inflationRate = mir[0] / mir[1];
 
   // Drop today's partial day so 30-day windows are complete.
   const today = dayStart(Math.floor(Date.now() / 1000));
@@ -113,7 +138,8 @@ export async function fetchSnapshot(fetchImpl = globalThis.fetch, { log = () => 
   return {
     fetchedAt: new Date().toISOString(),
     fixture: false,
-    sources: Object.fromEntries(Object.entries(SOURCES).map(([k, v]) => [k, { ...v, url: k === "chain" ? block.url : v.url }])),
+    stale,
+    sources: Object.fromEntries(Object.entries(SOURCES).map(([k, v]) => [k, { ...v, url: k === "chain" ? supply.url : v.url }])),
     intents: {
       volume: complete(volume),
       fees: complete(fees),
@@ -125,9 +151,9 @@ export async function fetchSnapshot(fetchImpl = globalThis.fetch, { log = () => 
     token: {
       price: priceSeries[priceSeries.length - 1][1],
       priceSeries,
-      totalSupply,
-      supplySource: `block ${block.result.header.height}`,
+      totalSupply: supply.totalSupply,
+      supplySource: supply.ref,
     },
-    params: { inflationRate, inflationSource: mir ? "EXPERIMENTAL_protocol_config.max_inflation_rate" : "default 2.5%" },
+    params: { inflationRate: inflation.rate, inflationSource: inflation.source },
   };
 }

@@ -454,16 +454,22 @@ async function rerun() {
   status.textContent = "Fetching from DefiLlama and a NEAR RPC node…";
   try {
     const [{ fetchSnapshot }, { runModel }] = await Promise.all([import("./model/sources.mjs"), import("./model/thesis.mjs")]);
-    const snap = await fetchSnapshot(fetch, { log: (m) => (status.textContent = m.replace(/^fetch /, "Fetching ") + "…") });
+    let fallback = null;
+    try { const r = await fetch("data/snapshot.json", { cache: "no-cache" }); if (r.ok) fallback = await r.json(); } catch {}
+    const snap = await fetchSnapshot(fetch, { fallback, log: (m) => (status.textContent = m.replace(/^fetch /, "Fetching ") + "…") });
+    if (snap.stale.length >= Object.keys(snap.sources).length) throw new Error("any of the data sources");
     const result = runModel(snap);
     render(result);
     const t = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    status.textContent = `Regraded live in your browser at ${t}, using the same model file as the daily run.`;
+    const n = Object.keys(snap.sources).length;
+    status.textContent = snap.stale.length
+      ? `Regraded in your browser at ${t}. ${n - snap.stale.length} of ${n} sources fetched live; ${snap.stale.join(", ")} came from the last daily run because your browser couldn't reach it.`
+      : `Regraded live in your browser at ${t}, using the same model file as the daily run.`;
   } catch (e) {
     status.textContent = "";
     const banner = $("#banner");
     banner.hidden = false; banner.className = "banner err";
-    banner.textContent = `Live rerun failed: ${e.message}. A source may be rate-limiting your browser. Try again in a minute; the published grades below are from the last daily run.`;
+    banner.textContent = `Live rerun couldn't reach ${e.message}. The grades below are from this morning's daily run. Try again in a minute.`;
   } finally {
     btns.forEach((b) => (b.disabled = false));
   }

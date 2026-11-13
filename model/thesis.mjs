@@ -315,6 +315,7 @@ export function runModel(snap) {
     asOf: new Date(metrics.asOfTs * 1000).toISOString().slice(0, 10),
     generatedAt: snap.fetchedAt,
     fixture: !!snap.fixture,
+    stale: snap.stale || [],
     sources: snap.sources,
     metrics, claims, verdict: v, scenarios,
     history: backfill(snap),

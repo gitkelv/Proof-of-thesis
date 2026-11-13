@@ -33,6 +33,20 @@ jobs:
       - name: Test the model
         run: npm test
 
+      - name: Check that browsers can reach each source (CORS)
+        continue-on-error: true
+        run: |
+          O="https://gitkelv.github.io"
+          for u in "https://api.llama.fi/summary/dexs/near-intents?excludeTotalDataChartBreakdown=true" \
+                   "https://api.llama.fi/protocol/near-intents" \
+                   "https://stablecoins.llama.fi/stablecoincharts/Near" \
+                   "https://coins.llama.fi/chart/coingecko:near?span=10&period=1d"; do
+            echo "$u -> $(curl -s -o /dev/null -D - -H "Origin: $O" "$u" | grep -i '^access-control-allow-origin' | tr -d '\r')"
+          done
+          for u in https://rpc.mainnet.near.org https://free.rpc.fastnear.com https://near.lava.build; do
+            echo "$u preflight -> $(curl -s -o /dev/null -D - -X OPTIONS -H "Origin: $O" -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type' "$u" | grep -i '^access-control-allow-origin' | tr -d '\r')"
+          done
+
       - name: Fetch live data and grade
         run: |
           for i in 1 2 3; do
