@@ -10,7 +10,7 @@ Most investment theses are written once and never checked again. This one has si
 
 It doesn't hide the weak parts. If NEAR's buybacks only cover a small slice of token issuance, the page says so, and shows how much Intents volume growth it would take to close the gap.
 
-- **Live dashboard:** deployed from this repo (GitHub Pages via `.github/workflows/grade.yml`, or any static host with `npm run build` → `_site/`; `netlify.toml` and `vercel.json` are included)
+- **Live dashboard:** https://proof-of-thesis.netlify.app (mirror: https://gitkelv.github.io/Proof-of-thesis/). Both redeploy automatically after each daily run.
 - **Model:** [`model/thesis.mjs`](model/thesis.mjs). One dependency-free file that runs in CI, in the tests and in the browser.
 
 ## The six claims
