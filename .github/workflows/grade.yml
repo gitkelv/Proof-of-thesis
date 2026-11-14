@@ -6,7 +6,12 @@ on:
     branches: [main]
     paths-ignore: ["site/data/**"]
   schedule:
-    - cron: "17 6 * * *"   # every day at 06:17 UTC
+    # Daily grade at 06:17 UTC, plus three backup runs: GitHub can delay or
+    # drop scheduled runs, and the ledger keeps one row per day either way.
+    - cron: "17 6 * * *"
+    - cron: "43 11 * * *"
+    - cron: "43 17 * * *"
+    - cron: "43 23 * * *"
   workflow_dispatch:
 
 permissions:
