@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kill Line</title>
+<meta name="description" content="Paste any crypto investment thesis. SERV Reasoning splits it into claims, gives each an onchain metric and the line that would prove it wrong, and flags the parts that are just vibes.">
+<link rel="icon" href="../logo.svg" type="image/svg+xml">
+<style>
+@font-face { font-family: "Fraunces"; src: url("../fonts/fraunces-latin-full-italic.woff2") format("woff2"); font-weight: 100 900; font-style: italic; font-display: swap; }
+@font-face { font-family: "Hanken Grotesk"; src: url("../fonts/hanken-grotesk-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+:root {
+  color-scheme: dark;
+  --bg: #0c0b1a; --panel: #131228; --panel-2: #191832;
+  --line: rgba(190,182,255,.11); --line-2: rgba(190,182,255,.22);
+  --ink: #f3f2fa; --ink-2: #b6b3cf; --ink-3: #807d9e;
+  --iris: #9d8cff; --iris-deep: #6c58ff;
+  --test: #5fd4b0; --part: #f2b84b; --vibe: #ff6b6b;
+  --sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --serif: "Fraunces", ui-serif, Georgia, serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body::before { content: ""; position: fixed; left: 50%; top: -480px; width: 1300px; height: 900px; translate: -50% 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(108,88,255,.38), rgba(108,88,255,.1) 55%, transparent 80%); }
+em { font-family: var(--serif); font-style: italic; font-weight: 350; font-variation-settings: "opsz" 144, "SOFT" 50; letter-spacing: -.015em; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--iris); outline-offset: 3px; border-radius: 8px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+
+header { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.02em; text-decoration: none; font-size: 18px; }
+.brand svg { width: 30px; height: 30px; }
+.by { font-size: 14px; color: var(--ink-3); text-decoration: none; }
+.by:hover { color: var(--ink); }
+
+.hero { padding: clamp(36px, 8vw, 84px) 0 28px; }
+h1 { font-size: clamp(44px, 8.4vw, 92px); line-height: .98; letter-spacing: -.05em; font-weight: 600; margin: 0; max-width: 12ch; }
+h1 em { font-weight: 300; }
+.lede { margin: 22px 0 0; font-size: clamp(17px, 2vw, 20px); color: var(--ink-2); max-width: 58ch; }
+.powered { display: inline-flex; gap: 8px; align-items: center; margin-top: 22px; font-size: 13.5px; color: var(--ink-2); border: 1px solid var(--line-2); border-radius: 999px; padding: 6px 13px; background: rgba(157,140,255,.06); }
+.powered b { color: var(--ink); font-weight: 600; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--test); box-shadow: 0 0 10px var(--test); }
+
+.input { margin-top: 26px; background: linear-gradient(180deg, rgba(25,24,50,.9), rgba(19,18,40,.9)); border: 1px solid var(--line-2); border-radius: 22px; padding: 18px; backdrop-filter: blur(12px); }
+label.l { display: block; font-size: 14px; color: var(--ink-2); margin: 2px 4px 10px; }
+textarea { width: 100%; min-height: 170px; resize: vertical; background: rgba(8,7,18,.6); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 16px; font: 16px/1.55 var(--sans); }
+textarea:focus { outline: none; border-color: var(--iris); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 500 14px var(--sans); color: var(--ink-2); background: transparent; border: 1px solid var(--line-2); border-radius: 999px; padding: 7px 13px; cursor: pointer; }
+.chip:hover { color: var(--ink); border-color: var(--iris); }
+.go { font: 600 16px var(--sans); color: #fff; background: linear-gradient(180deg, #8a77ff, var(--iris-deep)); border: 0; border-radius: 999px; padding: 13px 24px; cursor: pointer; box-shadow: 0 8px 26px rgba(108,88,255,.35), inset 0 1px 0 rgba(255,255,255,.25); }
+.go:disabled { opacity: .55; cursor: progress; }
+
+.status { margin-top: 18px; font-size: 14.5px; color: var(--ink-2); min-height: 22px; }
+.status.err { color: var(--vibe); }
+.stream { margin-top: 10px; font: 12.5px/1.5 var(--mono); color: var(--ink-3); background: rgba(8,7,18,.55); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; max-height: 120px; overflow: hidden; white-space: pre-wrap; word-break: break-word; -webkit-mask: linear-gradient(180deg, transparent, #000 40%); mask: linear-gradient(180deg, transparent, #000 40%); display: flex; flex-direction: column; justify-content: flex-end; }
+
+.result { margin: 40px 0 0; }
+.top { display: grid; grid-template-columns: 220px 1fr; gap: 18px; }
+@media (max-width: 720px) { .top { grid-template-columns: 1fr; } }
+.score { background: var(--panel); border: 1px solid var(--line-2); border-radius: 22px; padding: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.score svg { width: 150px; height: 150px; }
+.score .cap { font-size: 14px; color: var(--ink-2); margin-top: 8px; }
+.sum { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 24px 26px; }
+.asset { font-size: 14px; color: var(--iris); font-weight: 600; }
+.verdict { font-size: clamp(22px, 3vw, 30px); line-height: 1.2; letter-spacing: -.03em; font-weight: 600; margin: 8px 0 12px; }
+.summary { color: var(--ink-2); margin: 0; }
+.weak { margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: rgba(255,107,107,.08); border: 1px solid rgba(255,107,107,.25); font-size: 15px; }
+.weak b { color: var(--vibe); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 28px 2px 12px; font-size: 14px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 10px; height: 10px; border-radius: 3px; }
+.claims { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; }
+.claim { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 18px 18px 16px; position: relative; overflow: hidden; animation: in .5s cubic-bezier(.2,.7,.2,1) both; }
+.claim::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c); }
+@keyframes in { from { opacity: 0; transform: translateY(10px); } }
+@media (prefers-reduced-motion: reduce) { .claim { animation: none; } }
+.ch { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.kind { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--c); }
+.kind i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.w { display: flex; gap: 3px; } .w b { width: 12px; height: 4px; border-radius: 2px; background: var(--line-2); } .w b.on { background: var(--ink-2); }
+.claim h3 { font-size: 18px; line-height: 1.3; letter-spacing: -.02em; font-weight: 600; margin: 10px 0 12px; }
+.kv { display: grid; grid-template-columns: 62px 1fr; gap: 6px 10px; font-size: 14.5px; margin: 0; }
+.kv dt { color: var(--ink-3); } .kv dd { margin: 0; color: var(--ink-2); }
+.kv dd.kill { color: var(--ink); font-weight: 500; }
+.why { margin: 12px 0 0; font-size: 13.5px; color: var(--ink-3); }
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.ghost { font: 500 15px var(--sans); color: var(--ink); background: transparent; border: 1px solid var(--line-2); border-radius: 999px; padding: 10px 18px; cursor: pointer; }
+.ghost:hover { border-color: var(--iris); }
+
+.how { margin: 72px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 720px) { .how { grid-template-columns: 1fr; } }
+.how div { border-top: 1px solid var(--line-2); padding-top: 14px; }
+.how b { display: block; font-size: 17px; letter-spacing: -.02em; margin-bottom: 4px; }
+.how p { margin: 0; color: var(--ink-2); font-size: 15px; }
+footer { margin: 64px 0 40px; color: var(--ink-3); font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 22px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="./"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#6c58ff"/><path d="M6 21.5 12 16l4.5 3.5L26 10" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 24.5h22" stroke="#ff9b9b" stroke-width="1.8" stroke-dasharray="2.6 2.4"/></svg>Kill Line</a>
+    <a class="by" href="../">From the makers of Proof of Thesis</a>
+  </header>
+
+  <section class="hero">
+    <h1>Every thesis needs a <em>kill line.</em></h1>
+    <p class="lede">Paste any crypto investment thesis. Kill Line splits it into the claims it depends on, gives each one a metric to track and the number that would prove it wrong, and flags the parts that are just vibes.</p>
+    <span class="powered"><span class="dot"></span>Reasoning by <b>SERV Reasoning</b> from OpenServ</span>
+
+    <form class="input" id="form">
+      <label class="l" for="thesis">Your thesis, in plain words</label>
+      <textarea id="thesis" placeholder="e.g. I'm long X because its fees are growing, it buys back its token, and the community is the strongest in crypto…"></textarea>
+      <div class="row">
+        <div class="chips" id="chips"></div>
+        <button class="go" id="go" type="submit">Find the kill lines</button>
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+      <div class="stream" id="stream" hidden></div>
+    </form>
+  </section>
+
+  <section class="result" id="result" hidden aria-live="polite">
+    <div class="top">
+      <div class="score"><svg viewBox="0 0 120 120" id="ring"></svg><div class="cap">of this thesis can be <em>proven wrong</em> by data</div></div>
+      <div class="sum">
+        <div class="asset" id="asset"></div>
+        <div class="verdict" id="verdict"></div>
+        <p class="summary" id="summary"></p>
+        <div class="weak" id="weak"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--test)"></i>Testable: a metric can refute it</span>
+      <span><i class="sw" style="background:var(--part)"></i>Partial: only a proxy exists</span>
+      <span><i class="sw" style="background:var(--vibe)"></i>Vibes: nothing could prove it wrong</span>
+      <span>Bars show how much the thesis leans on the claim</span>
+    </div>
+    <div class="claims" id="claims"></div>
+    <div class="actions">
+      <button class="ghost" id="copy" type="button">Copy as a checklist</button>
+      <button class="ghost" id="again" type="button">Try another thesis</button>
+    </div>
+  </section>
+
+  <section class="how" aria-label="How it works">
+    <div><b>Split</b><p>SERV Reasoning reads the thesis and pulls out the separate claims it quietly depends on, and how much it leans on each.</p></div>
+    <div><b>Measure</b><p>Each claim gets a metric specific enough to compute and a public source to pull it from, like DefiLlama, Dune or a chain's RPC.</p></div>
+    <div><b>Commit</b><p>Each claim gets a kill line written before the data comes in. Claims no data could ever test are called out as vibes.</p></div>
+  </section>
+
+  <footer>
+    <span>Built for SERV Hackathon 02, Open Track.</span>
+    <a href="../">See a thesis graded daily: Proof of Thesis</a>
+    <a href="https://github.com/gitkelv/Proof-of-thesis/tree/main/site/kill-line">Source</a>
+    <span>Analysis, not financial advice.</span>
+  </footer>
+</div>
+
+<script>
+const EXAMPLES = {
+  "NEAR": "I'm long NEAR. NEAR Intents is becoming the default way to swap across chains, volume keeps growing month over month, and users pay a real fee for it. Since February a share of that fee buys back NEAR on the open market, so as Intents grows the buybacks will eventually outrun token inflation. Stablecoin supply on NEAR is rising, which shows it's becoming a place where dollars live. Plus the team ships faster than anyone and the community is incredibly strong.",
+  "Hyperliquid": "HYPE is the best risk/reward in crypto. Hyperliquid has taken a huge share of onchain perps from centralized exchanges and that share will keep growing. Almost all protocol revenue goes to the Assistance Fund buying HYPE, so token holders capture the value directly. HyperEVM will bring a wave of new apps. There were no VCs, so there's no unlock overhang, and the brand is unmatched.",
+  "Base": "Base will be the dominant consumer chain. Coinbase's distribution funnels millions of users onchain, daily active addresses already lead every L2, and stablecoin payments are taking off there. Sequencer revenue is huge and growing, and once a token launches it will capture that. Builders just want to be on Base, the culture is the best in crypto.",
+};
+const $ = (id) => document.getElementById(id);
+const COLORS = { testable: "var(--test)", partial: "var(--part)", vibes: "var(--vibe)" };
+const NAMES = { testable: "Testable", partial: "Partial", vibes: "Vibes" };
+let last = null;
+
+for (const name of Object.keys(EXAMPLES)) {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.textContent = name + " example";
+  b.onclick = () => { $("thesis").value = EXAMPLES[name]; $("thesis").focus(); };
+  $("chips").append(b);
+}
+
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function parseLoose(text) {
+  const a = text.indexOf("{"), b = text.lastIndexOf("}");
+  if (a < 0 || b < a) throw new Error("no JSON");
+  return JSON.parse(text.slice(a, b + 1));
+}
+
+function ring(pct) {
+  const r = 50, c = 2 * Math.PI * r, p = Math.max(0, Math.min(100, Math.round(pct)));
+  const col = p >= 70 ? "#5fd4b0" : p >= 40 ? "#f2b84b" : "#ff6b6b";
+  $("ring").innerHTML = `<circle cx="60" cy="60" r="${r}" fill="none" stroke="rgba(190,182,255,.14)" stroke-width="9"/>
+    <circle cx="60" cy="60" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" transform="rotate(-90 60 60)"
+      stroke-dasharray="${c}" stroke-dashoffset="${c}"><animate attributeName="stroke-dashoffset" to="${c * (1 - p / 100)}" dur="1s" fill="freeze" calcMode="spline" keySplines=".2 .7 .2 1"/></circle>
+    <text x="60" y="68" text-anchor="middle" fill="#f3f2fa" font-family="Hanken Grotesk, sans-serif" font-weight="600" font-size="30" letter-spacing="-1">${p}%</text>`;
+}
+
+function render(d) {
+  last = d;
+  ring(+d.testability || 0);
+  $("asset").textContent = d.asset || "Your thesis";
+  $("verdict").textContent = d.verdict || "";
+  $("summary").textContent = d.summary || "";
+  $("weak").innerHTML = `<b>Weakest link.</b> ${esc(d.weakest)}`;
+  const claims = (d.claims || []).slice().sort((a, b) => (b.weight || 0) - (a.weight || 0));
+  $("claims").innerHTML = claims.map((c, i) => {
+    const k = COLORS[c.kind] ? c.kind : "partial";
+    const w = Math.max(1, Math.min(5, +c.weight || 3));
+    const bars = Array.from({ length: 5 }, (_, j) => `<b class="${j < w ? "on" : ""}"></b>`).join("");
+    const rows = k === "vibes"
+      ? `<dt>To test</dt><dd class="kill">${esc(c.kill)}</dd>`
+      : `<dt>Metric</dt><dd>${esc(c.metric)}</dd><dt>Source</dt><dd>${esc(c.source)}</dd><dt>Kill line</dt><dd class="kill">${esc(c.kill)}</dd>`;
+    return `<article class="claim" style="--c:${COLORS[k]};animation-delay:${i * 70}ms">
+      <div class="ch"><span class="kind"><i></i>${NAMES[k]}</span><span class="w" title="Weight ${w} of 5" aria-label="Weight ${w} of 5">${bars}</span></div>
+      <h3>${esc(c.claim)}</h3><dl class="kv">${rows}</dl><p class="why">${esc(c.why)}</p></article>`;
+  }).join("");
+  $("result").hidden = false;
+  $("result").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+}
+
+async function run(thesis) {
+  const go = $("go"), st = $("status"), stream = $("stream");
+  go.disabled = true; st.className = "status"; st.textContent = "Sending your thesis to SERV Reasoning…";
+  stream.hidden = true; stream.textContent = "";
+  try {
+    const res = await fetch("/api/kill-line", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ thesis }) });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error || `Request failed (${res.status}).`);
+    }
+    const model = res.headers.get("x-serv-model") || "SERV Reasoning";
+    st.textContent = `SERV Reasoning (${model}) is splitting the thesis into claims…`;
+    stream.hidden = false;
+    const reader = res.body.getReader(), dec = new TextDecoder();
+    let buf = "", out = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split("\n"); buf = lines.pop();
+      for (const line of lines) {
+        const t = line.trim();
+        if (!t.startsWith("data:")) continue;
+        const data = t.slice(5).trim();
+        if (data === "[DONE]") continue;
+        try {
+          const j = JSON.parse(data);
+          const piece = j.choices?.[0]?.delta?.content ?? j.choices?.[0]?.message?.content ?? "";
+          if (piece) { out += piece; stream.textContent = out.slice(-600); }
+        } catch { /* keep-alive or partial line */ }
+      }
+    }
+    const d = parseLoose(out);
+    if (!Array.isArray(d.claims) || !d.claims.length) throw new Error("SERV Reasoning didn't return any claims. Try a longer thesis.");
+    st.textContent = `Done. ${d.claims.length} claims found by SERV Reasoning (${model}).`;
+    stream.hidden = true;
+    render(d);
+  } catch (err) {
+    st.className = "status err";
+    st.textContent = err.message === "no JSON" ? "The answer came back in the wrong shape. Press the button to try again." : err.message;
+  } finally { go.disabled = false; }
+}
+
+$("form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const t = $("thesis").value.trim();
+  if (t.length < 40) { $("status").className = "status err"; $("status").textContent = "Write at least a couple of sentences, or pick an example."; return; }
+  run(t);
+});
+$("again").onclick = () => { $("thesis").value = ""; $("result").hidden = true; $("thesis").focus(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+$("copy").onclick = async () => {
+  if (!last) return;
+  const lines = [`Kill Line: ${last.asset}`, `${last.testability}% of this thesis can be proven wrong by data.`, ""];
+  for (const c of last.claims) lines.push(`[${NAMES[c.kind] || c.kind}] ${c.claim}`, c.kind === "vibes" ? `  To test: ${c.kill}` : `  Track: ${c.metric} (${c.source})\n  Kill line: ${c.kill}`, "");
+  try { await navigator.clipboard.writeText(lines.join("\n")); $("copy").textContent = "Copied"; setTimeout(() => ($("copy").textContent = "Copy as a checklist"), 1600); } catch { /* clipboard blocked */ }
+};
+</script>
+</body>
+</html>
