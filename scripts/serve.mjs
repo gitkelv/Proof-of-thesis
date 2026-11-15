@@ -10,9 +10,8 @@ const port = Number(process.env.PORT || 4173);
 
 createServer(async (req, res) => {
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
-  if (p.endsWith("/")) p += "index.html";
-  if (p === "/index.html") p = "/site/index.html";
-  else if (!p.startsWith("/model/") && !p.startsWith("/site/")) p = "/site" + p;
+  if (p === "/") p = "/site/index.html";
+  else if (!p.startsWith("/model/")) p = "/site" + p;
   const file = normalize(join(root, p));
   if (!file.startsWith(root)) { res.writeHead(403).end(); return; }
   try {
