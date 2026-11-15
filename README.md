@@ -15,21 +15,6 @@ It doesn't hide the weak parts. If NEAR's buybacks only cover a small slice of t
 - **Live dashboard:** https://proof-of-thesis.netlify.app (mirror: https://gitkelv.github.io/Proof-of-thesis/). Both redeploy automatically after each daily run.
 - **Model:** [`model/thesis.mjs`](model/thesis.mjs). One dependency-free file that runs in CI, in the tests and in the browser.
 
-## Kill Line (SERV Hackathon 02, Open Track)
-
-**Live:** https://proof-of-thesis.netlify.app/kill-line/
-
-Proof of Thesis grades one thesis, whose claims and kill lines were written by hand. Kill Line writes them for any thesis. Paste a crypto investment thesis in plain words. **SERV Reasoning** (OpenServ's inference API) then splits it into the claims it depends on and weights each one by how much the thesis leans on it. Each claim is labeled:
-
-- **Testable:** it gets a metric specific enough to compute, a public source, and a kill line, the threshold that would prove it wrong.
-- **Partial:** only a proxy metric exists.
-- **Vibes:** no data could ever prove it wrong. Kill Line says what would make it testable.
-
-The result is a weight-adjusted **testability score** (how much of the thesis data could disprove), the weakest link, and a one-line verdict. You can copy the result as a checklist.
-
-- `netlify/edge-functions/kill-line.js`: calls `https://inference-api.openserv.ai/v1/chat/completions` (default model `gpt-5.4-mini`, `reasoning_effort: low`, streamed) with the key kept server-side in `SERV_API_KEY`.
-- `site/kill-line/index.html`: the page. It streams the model's output as it arrives, then renders the claim cards.
-
 ## What it looks like
 
 Screenshots from the live site, graded on real data from 12 November 2026.
