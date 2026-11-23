@@ -128,5 +128,18 @@
    "stablecoins": "holding"
   },
   "coverage": 0.2195398754984524
+ },
+ {
+  "asOf": "2026-11-22",
+  "verdict": "Thesis intact",
+  "claims": {
+   "demand": "weakening",
+   "pricing": "holding",
+   "capture": "holding",
+   "deflation": "holding",
+   "liquidity": "weakening",
+   "stablecoins": "holding"
+  },
+  "coverage": 0.20683543460111822
  }
 ]
