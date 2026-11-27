@@ -1,7 +1,7 @@
 {
  "modelVersion": "1.0.0",
- "asOf": "2026-11-25",
- "generatedAt": "2026-11-27T01:09:13.725Z",
+ "asOf": "2026-11-26",
+ "generatedAt": "2026-11-27T05:20:38.091Z",
  "fixture": false,
  "stale": [],
  "sources": {
@@ -47,39 +47,39 @@
   }
  },
  "metrics": {
-  "asOfTs": 1795564800,
-  "vol30": 4305242131,
-  "volPrev30": 4000245264,
-  "volChange30": 0.07624454173967865,
-  "vol30_90dAgo": 2617457183,
-  "fees30": 7995583,
-  "captured30": 1701762,
-  "captured30_90dAgo": 666837,
+  "asOfTs": 1795651200,
+  "vol30": 4288099542,
+  "volPrev30": 4020921597,
+  "volChange30": 0.06644694221328296,
+  "vol30_90dAgo": 2673392210,
+  "fees30": 7849878,
+  "captured30": 1659464,
+  "captured30_90dAgo": 678739,
   "captureSource": "holdersRevenue",
-  "feeBps": 18.571738259336477,
-  "takeRate": 0.21283776304992394,
-  "capturePerVolume": 0.0003952767227065864,
-  "price": 3.07803903,
-  "price90dAgo": 1.871800849578782,
-  "supply": 1312806157.821519,
-  "marketCap": 4040868592.5989747,
+  "feeBps": 18.306193508602092,
+  "takeRate": 0.2113999733499043,
+  "capturePerVolume": 0.0003869928819856673,
+  "price": 3.0729925185,
+  "price90dAgo": 1.8692928591952929,
+  "supply": 1312806046.585628,
+  "marketCap": 4034243159.3991976,
   "inflationRate": 0.025,
-  "inflationTokensYr": 32820153.945537973,
-  "inflationUsdYr": 101021714.81497437,
-  "buybackUsdYr": 20704771,
-  "coverage": 0.20495366801010736,
-  "coverage90dAgo": 0.13288011181187337,
-  "coverageChange": 0.5423953608668919,
-  "tvlNow": 153966815,
-  "tvlChange30": -0.24101634770339575,
-  "stablecoinsNow": 133137560,
-  "stablecoinsChange90": 0.1639388219256277,
-  "dailyVolNow": 143508071.03333333,
-  "deflationDailyVolume": 700197622.3536346,
-  "deflationMultiple": 4.879151516091357,
-  "growth90": 0.020579597031444186,
-  "growth180": 0.1711536891096639,
-  "mcapToCapture": 195.1660606436543
+  "inflationTokensYr": 32820151.164640702,
+  "inflationUsdYr": 100856078.98497994,
+  "buybackUsdYr": 20190145.333333332,
+  "coverage": 0.2001876886007056,
+  "coverage90dAgo": 0.1354332904299391,
+  "coverageChange": 0.4781276299586368,
+  "tvlNow": 158923994,
+  "tvlChange30": -0.2069749619565131,
+  "stablecoinsNow": 133133785,
+  "stablecoinsChange90": 0.1638543957350691,
+  "dailyVolNow": 142936651.4,
+  "deflationDailyVolume": 714013196.3114948,
+  "deflationMultiple": 4.995312184230271,
+  "growth90": 0.01421684021947045,
+  "growth180": 0.16905638172392723,
+  "mcapToCapture": 199.81248736921083
  },
  "claims": [
   {
@@ -90,7 +90,7 @@
    "kill": "Broken if 30-day volume falls more than 25% vs. the prior 30 days.",
    "breakAt": -0.25,
    "format": "pct",
-   "value": 0.07624454173967865,
+   "value": 0.06644694221328296,
    "status": "holding"
   },
   {
@@ -101,7 +101,7 @@
    "kill": "Broken if the fee rate drops below 4 bps.",
    "breakAt": 4,
    "format": "bps",
-   "value": 18.571738259336477,
+   "value": 18.306193508602092,
    "status": "holding"
   },
   {
@@ -112,7 +112,7 @@
    "kill": "Broken if NEAR's share falls below 10% of fees.",
    "breakAt": 0.1,
    "format": "pct",
-   "value": 0.21283776304992394,
+   "value": 0.2113999733499043,
    "status": "holding"
   },
   {
@@ -123,8 +123,8 @@
    "kill": "Broken if coverage is under 5% and not rising. Holding needs 25%+ coverage or 50%+ growth in 90 days.",
    "breakAt": 0.05,
    "format": "pct",
-   "value": 0.20495366801010736,
-   "status": "holding"
+   "value": 0.2001876886007056,
+   "status": "weakening"
   },
   {
    "id": "liquidity",
@@ -134,7 +134,7 @@
    "kill": "Broken if TVL falls more than 30% in 30 days.",
    "breakAt": -0.3,
    "format": "pct",
-   "value": -0.24101634770339575,
+   "value": -0.2069749619565131,
    "status": "weakening"
   },
   {
@@ -145,289 +145,289 @@
    "kill": "Broken if stablecoin supply on NEAR falls more than 15% in 90 days.",
    "breakAt": -0.15,
    "format": "pct",
-   "value": 0.1639388219256277,
+   "value": 0.1638543957350691,
    "status": "holding"
   }
  ],
  "verdict": {
   "label": "Thesis intact",
   "tone": "holding",
-  "holding": 5,
-  "weakening": 1,
+  "holding": 4,
+  "weakening": 2,
   "broken": 0,
   "unknown": 0,
-  "score": 11
+  "score": 10
  },
  "scenarios": {
   "bear": {
    "label": "Bear",
    "monthlyGrowth": -0.03,
    "note": "Volume shrinks 3%/mo (or worse, if the trend is already negative).",
-   "captureRate": 0.0003952767227065864,
+   "captureRate": 0.0003869928819856673,
    "months": 12,
-   "volume": 42618009439.49438,
-   "buybackUsd": 16845907.099521697,
-   "buybackTokens": 5472934.857334052,
-   "netTokens": 27347219.088203922,
-   "netSupplyChangePct": 0.02083111731710957,
+   "volume": 42448313288.24686,
+   "buybackUsd": 16427195.094849147,
+   "buybackTokens": 5345667.129338684,
+   "netTokens": 27474484.03530202,
+   "netSupplyChangePct": 0.02092806024679594,
    "monthsToDeflation": null,
    "crossMonth": null,
    "path": [
     {
      "month": 1,
-     "volume": 4176084867.0699997,
-     "buybackUsd": 1650709.14,
-     "netTokens": 2198726.861036976
+     "volume": 4159456555.74,
+     "buybackUsd": 1609680.0799999998,
+     "netTokens": 2211197.4330692887
     },
     {
      "month": 2,
-     "volume": 4050802321.0579,
-     "buybackUsd": 1601187.8658,
-     "netTokens": 2214815.4400697113
+     "volume": 4034672859.0678,
+     "buybackUsd": 1561389.6776,
+     "netTokens": 2226911.887988812
     },
     {
      "month": 3,
-     "volume": 3929278251.4261627,
-     "buybackUsd": 1553152.2298259998,
-     "netTokens": 2230421.361731465
+     "volume": 3913632673.295766,
+     "buybackUsd": 1514547.987272,
+     "netTokens": 2242154.909260749
     },
     {
      "month": 4,
-     "volume": 3811399903.883378,
-     "buybackUsd": 1506557.66293122,
-     "netTokens": 2245559.105743366
+     "volume": 3796223693.096893,
+     "buybackUsd": 1469111.54765384,
+     "netTokens": 2256940.6398945283
     },
     {
      "month": 5,
-     "volume": 3697057906.766876,
-     "buybackUsd": 1461360.9330432832,
-     "netTokens": 2260242.71743491
+     "volume": 3682336982.3039856,
+     "buybackUsd": 1425038.2012242244,
+     "netTokens": 2271282.7986092945
     },
     {
      "month": 6,
-     "volume": 3586146169.56387,
-     "buybackUsd": 1417520.1050519848,
-     "netTokens": 2274485.8207757077
+     "volume": 3571866872.8348665,
+     "buybackUsd": 1382287.055187498,
+     "netTokens": 2285194.6925626174
     },
     {
      "month": 7,
-     "volume": 3478561784.4769535,
-     "buybackUsd": 1374994.501900425,
-     "netTokens": 2288301.6310162814
+     "volume": 3464710866.64982,
+     "buybackUsd": 1340818.4435318727,
+     "netTokens": 2298689.2296973406
     },
     {
      "month": 8,
-     "volume": 3374204930.942645,
-     "buybackUsd": 1333744.6668434124,
-     "netTokens": 2301702.966949638
+     "volume": 3360769540.6503253,
+     "buybackUsd": 1300593.8902259166,
+     "netTokens": 2311778.930718022
     },
     {
      "month": 9,
-     "volume": 3272978783.014365,
-     "buybackUsd": 1293732.3268381099,
-     "netTokens": 2314702.2628049934
+     "volume": 3259946454.430815,
+     "buybackUsd": 1261576.073519139,
+     "netTokens": 2324475.940708083
     },
     {
      "month": 10,
-     "volume": 3174789419.523935,
-     "buybackUsd": 1254920.3570329668,
-     "netTokens": 2327311.5797846885
+     "volume": 3162148060.797891,
+     "buybackUsd": 1223728.7913135649,
+     "netTokens": 2336792.0403984427
     },
     {
      "month": 11,
-     "volume": 3079545736.938216,
-     "buybackUsd": 1217272.7463219776,
-     "netTokens": 2339542.617254993
+     "volume": 3067283618.973954,
+     "buybackUsd": 1187016.927574158,
+     "netTokens": 2348738.6570980907
     },
     {
      "month": 12,
-     "volume": 2987159364.83007,
-     "buybackUsd": 1180754.5639323182,
-     "netTokens": 2351406.723601188
+     "volume": 2975265110.4047356,
+     "buybackUsd": 1151406.4197469333,
+     "netTokens": 2360326.87529675
     }
    ]
   },
   "base": {
    "label": "Base",
-   "monthlyGrowth": 0.08557684455483194,
+   "monthlyGrowth": 0.08452819086196361,
    "note": "Half of the trailing 180-day growth rate: the trend cools.",
-   "captureRate": 0.0003952767227065864,
+   "captureRate": 0.0003869928819856673,
    "months": 12,
-   "volume": 91681013464.02946,
-   "buybackUsd": 36239370.53647999,
-   "buybackTokens": 11773525.346259167,
-   "netTokens": 21046628.599278808,
-   "netSupplyChangePct": 0.016031786927480408,
-   "monthsToDeflation": 19.302671869721916,
+   "volume": 90660186799.0103,
+   "buybackUsd": 35084846.970707946,
+   "buybackTokens": 11417159.905040603,
+   "netTokens": 21402991.2596001,
+   "netSupplyChangePct": 0.01630323939721745,
+   "monthsToDeflation": 19.822527719353243,
    "crossMonth": null,
    "path": [
     {
      "month": 1,
-     "volume": 4673671167.6155,
-     "buybackUsd": 1847393.4221433199,
-     "netTokens": 2134827.644611731
+     "volume": 4650564838.5212755,
+     "buybackUsd": 1799735.4897205578,
+     "netTokens": 2149350.4195876783
     },
     {
      "month": 2,
-     "volume": 5073629198.626932,
-     "buybackUsd": 2005487.521861698,
-     "netTokens": 2083465.6904007806
+     "volume": 5043668670.807739,
+     "buybackUsd": 1951863.874696707,
+     "netTokens": 2099845.455270223
     },
     {
      "month": 3,
-     "volume": 5507814375.886685,
-     "buybackUsd": 2177110.8157767113,
-     "netTokens": 2027708.3422182878
+     "volume": 5470000858.858282,
+     "buybackUsd": 2116851.396833642,
+     "netTokens": 2046155.9258803274
     },
     {
      "month": 4,
-     "volume": 5979155750.568809,
-     "buybackUsd": 2363421.0896370783,
-     "netTokens": 1967179.4561175916
+     "volume": 5932370135.470962,
+     "buybackUsd": 2295785.015731611,
+     "netTokens": 1987928.1177028734
     },
     {
      "month": 5,
-     "volume": 6490833032.804365,
-     "buybackUsd": 2565675.208842562,
-     "netTokens": 1901470.698939979
+     "volume": 6433822650.545863,
+     "buybackUsd": 2489843.569719408,
+     "netTokens": 1924778.4182423223
     },
     {
      "month": 6,
-     "volume": 7046298042.284034,
-     "buybackUsd": 2785237.5973678683,
-     "netTokens": 1830138.7936634868
+     "volume": 6977662039.52323,
+     "buybackUsd": 2700305.5421970836,
+     "netTokens": 1856290.7889328937
     },
     {
      "month": 7,
-     "volume": 7649297994.535591,
-     "buybackUsd": 3023589.4422860923,
-     "netTokens": 1752702.529017348
+     "volume": 7567471188.170328,
+     "buybackUsd": 2928557.484453537,
+     "netTokens": 1782014.0242215144
     },
     {
      "month": 8,
-     "volume": 8303900779.96755,
-     "buybackUsd": 3282338.68598624,
-     "netTokens": 1668639.5131886802
+     "volume": 8207135837.106401,
+     "buybackUsd": 3176103.1504496583,
+     "netTokens": 1701458.7789660022
     },
     {
      "month": 9,
-     "volume": 9014522406.213581,
-     "buybackUsd": 3563230.8734931955,
-     "netTokens": 1577382.649721632
+     "volume": 8900870181.575394,
+     "buybackUsd": 3444573.4037481514,
+     "netTokens": 1614094.3445646
     },
     {
      "month": 10,
-     "volume": 9785956788.90617,
-     "buybackUsd": 3868160.9280671007,
-     "netTokens": 1478316.3118351025
+     "volume": 9653244635.12116,
+     "buybackUsd": 3735736.961858219,
+     "netTokens": 1519345.1525775685
     },
     {
      "month": 11,
-     "volume": 10623408091.850697,
-     "buybackUsd": 4199185.934521373,
-     "netTokens": 1370772.189350641
+     "volume": 10469215940.075909,
+     "buybackUsd": 4051512.048780263,
+     "netTokens": 1416586.9828062407
     },
     {
      "month": 12,
-     "volume": 11532525834.769547,
-     "buybackUsd": 4558539.016496746,
-     "netTokens": 1254024.7802135411
+     "volume": 11354159823.233759,
+     "buybackUsd": 4393979.032519107,
+     "netTokens": 1305142.8508478557
     }
    ]
   },
   "bull": {
    "label": "Bull",
-   "monthlyGrowth": 0.1711536891096639,
+   "monthlyGrowth": 0.16905638172392723,
    "note": "The trailing 180-day growth rate continues.",
-   "captureRate": 0.0003952767227065864,
+   "captureRate": 0.0003869928819856673,
    "months": 12,
-   "volume": 166692130074.30743,
-   "buybackUsd": 65889518.876752235,
-   "buybackTokens": 21406329.885541525,
-   "netTokens": 11413824.059996448,
-   "netSupplyChangePct": 0.008694218862392175,
-   "monthsToDeflation": 10.032142138597493,
+   "volume": 163585747128.2841,
+   "buybackUsd": 63306519.73295325,
+   "buybackTokens": 20600935.19650176,
+   "netTokens": 12219215.96813894,
+   "netSupplyChangePct": 0.009307708476753988,
+   "monthsToDeflation": 10.297898263842717,
    "crossMonth": 11,
    "path": [
     {
      "month": 1,
-     "volume": 5042100204.231001,
-     "buybackUsd": 1993024.84428664,
-     "netTokens": 2087514.5921377605
+     "volume": 5013030135.042549,
+     "buybackUsd": 1940006.979441115,
+     "netTokens": 2103703.875095267
     },
     {
      "month": 2,
-     "volume": 5905074255.045727,
-     "buybackUsd": 2334138.3988735117,
-     "netTokens": 1976692.8802419007
+     "volume": 5860514871.145853,
+     "buybackUsd": 2267977.5399045954,
+     "netTokens": 1996977.1068102694
     },
     {
      "month": 3,
-     "volume": 6915749498.263303,
-     "buybackUsd": 2733634.7967332373,
-     "netTokens": 1846903.623521616
+     "volume": 6851272310.301039,
+     "buybackUsd": 2651393.616632,
+     "netTokens": 1872207.4972459222
     },
     {
      "month": 4,
-     "volume": 8099405537.849374,
-     "buybackUsd": 3201506.476872677,
-     "netTokens": 1694900.4567068536
+     "volume": 8009523617.285864,
+     "buybackUsd": 3099628.6279857233,
+     "netTokens": 1726344.7889395196
     },
     {
      "month": 5,
-     "volume": 9485648675.247536,
-     "buybackUsd": 3749456.1210979186,
-     "netTokens": 1516881.3871353928
+     "volume": 9363584699.356552,
+     "buybackUsd": 3623640.62852089,
+     "netTokens": 1555823.0589383838
     },
     {
      "month": 6,
-     "volume": 11109152439.61435,
-     "buybackUsd": 4391189.368378638,
-     "netTokens": 1308393.6970749064
+     "volume": 10946558448.595299,
+     "buybackUsd": 4236240.20184645,
+     "netTokens": 1356473.5422579516
     },
     {
      "month": 7,
-     "volume": 13010524862.535965,
-     "buybackUsd": 5142757.628355777,
-     "netTokens": 1064222.569726616
+     "volume": 12797144012.244307,
+     "buybackUsd": 4952403.642484049,
+     "netTokens": 1123422.7175891118
     },
     {
      "month": 8,
-     "volume": 15237324190.012,
-     "buybackUsd": 6022959.568645733,
-     "netTokens": 778260.6531586
+     "volume": 14960582875.35435,
+     "buybackUsd": 5789639.083118801,
+     "netTokens": 850973.1637439805
     },
     {
      "month": 9,
-     "volume": 17845248437.292473,
-     "buybackUsd": 7053811.318177801,
-     "netTokens": 443355.29962509824
+     "volume": 17489764884.742702,
+     "buybackUsd": 6768414.5179983005,
+     "netTokens": 532464.2741234931
     },
     {
      "month": 10,
-     "volume": 20899528540.413544,
-     "buybackUsd": 8261097.147567432,
-     "netTokens": 51129.6593317613
+     "volume": 20446521253.35951,
+     "buybackUsd": 7912658.186418794,
+     "netTokens": 160109.42407685984
     },
     {
      "month": 11,
-     "volume": 24476559950.758034,
-     "buybackUsd": 9675014.40046692,
-     "netTokens": -408226.84626118094
+     "volume": 23903136155.29384,
+     "buybackUsd": 9250343.549232965,
+     "netTokens": -275194.3896360113
     },
     {
      "month": 12,
-     "volume": 28665813483.044125,
-     "buybackUsd": 11330928.807295958,
-     "netTokens": -946203.9124028785
+     "volume": 27944113865.562202,
+     "buybackUsd": 10814173.159369562,
+     "netTokens": -784089.091045808
     }
    ]
   }
  },
  "history": [
   {
-   "ts": 1779840000,
-   "date": "2026-05-27",
+   "ts": 1779926400,
+   "date": "2026-05-28",
    "verdict": "weakening",
    "claims": {
     "demand": "weakening",
@@ -438,19 +438,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": -0.04752092297900001,
-    "pricing": 16.307616104548433,
-    "capture": 0.18402931328574135,
-    "deflation": 0.08125247164174568,
-    "liquidity": 0.29891969946598507,
-    "stablecoins": -0.013938367800444884
+    "demand": -0.0356575501597991,
+    "pricing": 16.062956612272618,
+    "capture": 0.18664059005895087,
+    "deflation": 0.08838620836905,
+    "liquidity": 0.28917842620453627,
+    "stablecoins": -0.027410915123155633
    },
-   "coverage": 0.08125247164174568,
-   "vol30": 1844236448
+   "coverage": 0.08838620836905,
+   "vol30": 1877762029
   },
   {
-   "ts": 1780444800,
-   "date": "2026-06-03",
+   "ts": 1780531200,
+   "date": "2026-06-04",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
@@ -461,19 +461,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": 0.15559101173426537,
-    "pricing": 14.787627441814465,
-    "capture": 0.2172721101770564,
-    "deflation": 0.09234959170995455,
-    "liquidity": 0.3710378310668614,
-    "stablecoins": -0.040494459719197295
+    "demand": 0.18505489206216286,
+    "pricing": 14.326421434333596,
+    "capture": 0.2260094592663686,
+    "deflation": 0.10167281029571344,
+    "liquidity": 0.3411272902310465,
+    "stablecoins": -0.046374016452991884
    },
-   "coverage": 0.09234959170995455,
-   "vol30": 2087085986
+   "coverage": 0.10167281029571344,
+   "vol30": 2139650864
   },
   {
-   "ts": 1781049600,
-   "date": "2026-06-10",
+   "ts": 1781136000,
+   "date": "2026-06-11",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
@@ -484,19 +484,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": 0.43658102383790687,
-    "pricing": 13.035106985613186,
-    "capture": 0.273347314012814,
-    "deflation": 0.14992674332544403,
-    "liquidity": 0.148448128381786,
-    "stablecoins": -0.03290147807899135
+    "demand": 0.45353361249115376,
+    "pricing": 12.763824445410945,
+    "capture": 0.273774651566319,
+    "deflation": 0.15525575490456542,
+    "liquidity": 0.17535368827346987,
+    "stablecoins": -0.03570768258105883
    },
-   "coverage": 0.14992674332544403,
-   "vol30": 2400867905
+   "coverage": 0.15525575490456542,
+   "vol30": 2435497302
   },
   {
-   "ts": 1781654400,
-   "date": "2026-06-17",
+   "ts": 1781740800,
+   "date": "2026-06-18",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
@@ -507,19 +507,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": 0.5713981439749798,
-    "pricing": 12.088451634523567,
-    "capture": 0.28234799740756367,
-    "deflation": 0.14112893334708698,
-    "liquidity": 0.3734734739173704,
-    "stablecoins": -0.03896179385073362
+    "demand": 0.5714093323398597,
+    "pricing": 12.12554499212097,
+    "capture": 0.27954351833579605,
+    "deflation": 0.15106711737379203,
+    "liquidity": 0.32076586611192504,
+    "stablecoins": -0.04973599587490518
    },
-   "coverage": 0.14112893334708698,
-   "vol30": 2559149090
+   "coverage": 0.15106711737379203,
+   "vol30": 2570148395
   },
   {
-   "ts": 1782259200,
-   "date": "2026-06-24",
+   "ts": 1782345600,
+   "date": "2026-06-25",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
@@ -530,19 +530,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": 0.4464072641993275,
-    "pricing": 12.082980665638622,
-    "capture": 0.2495614977916633,
-    "deflation": 0.14311777079443305,
-    "liquidity": 0.06439509060136239,
-    "stablecoins": -0.057522770108858645
+    "demand": 0.36425450076843524,
+    "pricing": 12.272843935281571,
+    "capture": 0.23090646638694565,
+    "deflation": 0.13372372448825562,
+    "liquidity": 0.029838093365329277,
+    "stablecoins": -0.050953458181320355
    },
-   "coverage": 0.14311777079443305,
-   "vol30": 2510185263
+   "coverage": 0.13372372448825562,
+   "vol30": 2468997419
   },
   {
-   "ts": 1782864000,
-   "date": "2026-07-01",
+   "ts": 1782950400,
+   "date": "2026-07-02",
    "verdict": "weakening",
    "claims": {
     "demand": "holding",
@@ -553,19 +553,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": 0.16584328230656276,
-    "pricing": 13.247505572047931,
-    "capture": 0.193330230477077,
-    "deflation": 0.12721217393792428,
-    "liquidity": -0.06558475378176387,
-    "stablecoins": -0.06833474227154934
+    "demand": 0.1434916258044332,
+    "pricing": 13.336662736179882,
+    "capture": 0.18701031897677245,
+    "deflation": 0.11491835208080102,
+    "liquidity": -0.06658458886328211,
+    "stablecoins": -0.06960799194254375
    },
-   "coverage": 0.12721217393792428,
-   "vol30": 2348451173
+   "coverage": 0.11491835208080102,
+   "vol30": 2359237886
   },
   {
-   "ts": 1783468800,
-   "date": "2026-07-08",
+   "ts": 1783555200,
+   "date": "2026-07-09",
    "verdict": "weakening",
    "claims": {
     "demand": "weakening",
@@ -576,19 +576,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": -0.08396419535678479,
-    "pricing": 14.31230079362407,
-    "capture": 0.13369884314454583,
-    "deflation": 0.07763658212702561,
-    "liquidity": 0.0865592862841309,
-    "stablecoins": -0.06746305205747782
+    "demand": -0.09950655578241008,
+    "pricing": 14.439225071098067,
+    "capture": 0.13169627387275407,
+    "deflation": 0.07959611006075734,
+    "liquidity": 0.07773643149424814,
+    "stablecoins": -0.06120489423369513
    },
-   "coverage": 0.07763658212702561,
-   "vol30": 2149630618
+   "coverage": 0.07959611006075734,
+   "vol30": 2148473332
   },
   {
-   "ts": 1784073600,
-   "date": "2026-07-15",
+   "ts": 1784160000,
+   "date": "2026-07-16",
    "verdict": "weakening",
    "claims": {
     "demand": "weakening",
@@ -599,19 +599,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": -0.14180520855973722,
-    "pricing": 14.857447894302323,
-    "capture": 0.12818114667417724,
-    "deflation": 0.07655884080336436,
-    "liquidity": 0.05939420355754943,
-    "stablecoins": -0.05716864190630788
+    "demand": -0.15870933237881446,
+    "pricing": 14.897208674443181,
+    "capture": 0.12933345907888055,
+    "deflation": 0.0754998668283774,
+    "liquidity": -0.002809494260396894,
+    "stablecoins": -0.05968062061863422
    },
-   "coverage": 0.07655884080336436,
-   "vol30": 2153157812
+   "coverage": 0.0754998668283774,
+   "vol30": 2149553027
   },
   {
-   "ts": 1784678400,
-   "date": "2026-07-22",
+   "ts": 1784764800,
+   "date": "2026-07-23",
    "verdict": "weakening",
    "claims": {
     "demand": "weakening",
@@ -622,19 +622,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": -0.11439814395388248,
-    "pricing": 15.412187762186313,
-    "capture": 0.13862747373884907,
-    "deflation": 0.0904794892866974,
-    "liquidity": 0.018483576009893365,
-    "stablecoins": -0.11100058993618689
+    "demand": -0.12790568009903214,
+    "pricing": 15.406754932316819,
+    "capture": 0.14101716550953627,
+    "deflation": 0.09566843237871249,
+    "liquidity": 0.012145030083760444,
+    "stablecoins": -0.10566091959349633
    },
-   "coverage": 0.0904794892866974,
-   "vol30": 2202515342
+   "coverage": 0.09566843237871249,
+   "vol30": 2188457605
   },
   {
-   "ts": 1785283200,
-   "date": "2026-07-29",
+   "ts": 1785369600,
+   "date": "2026-07-30",
    "verdict": "weakening",
    "claims": {
     "demand": "weakening",
@@ -645,19 +645,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": -0.09994253272813292,
-    "pricing": 14.954163969237396,
-    "capture": 0.14958546918768595,
-    "deflation": 0.10880432622364351,
-    "liquidity": 0.1316250734685378,
-    "stablecoins": -0.10500641899213015
+    "demand": -0.092354135363369,
+    "pricing": 14.870408195379692,
+    "capture": 0.15396349377608246,
+    "deflation": 0.11282347608192828,
+    "liquidity": 0.19218496043584743,
+    "stablecoins": -0.10495128217885874
    },
-   "coverage": 0.10880432622364351,
-   "vol30": 2154957647
+   "coverage": 0.11282347608192828,
+   "vol30": 2137226469
   },
   {
-   "ts": 1785888000,
-   "date": "2026-08-05",
+   "ts": 1785974400,
+   "date": "2026-08-06",
    "verdict": "weakening",
    "claims": {
     "demand": "weakening",
@@ -668,42 +668,19 @@
     "stablecoins": "holding"
    },
    "values": {
-    "demand": -0.04425965283504296,
-    "pricing": 13.931847615110424,
-    "capture": 0.168778822350864,
-    "deflation": 0.10386810542705496,
-    "liquidity": 0.0848492230277893,
-    "stablecoins": 0.05802482708243151
+    "demand": -0.05524506720768718,
+    "pricing": 13.766843119707161,
+    "capture": 0.1688642647405534,
+    "deflation": 0.10220206068457045,
+    "liquidity": 0.055438406074836744,
+    "stablecoins": 0.06633953519378544
    },
-   "coverage": 0.10386810542705496,
-   "vol30": 2036335078
+   "coverage": 0.10220206068457045,
+   "vol30": 2033450934
   },
   {
-   "ts": 1786492800,
-   "date": "2026-08-12",
-   "verdict": "holding",
-   "claims": {
-    "demand": "weakening",
-    "pricing": "holding",
-    "capture": "weakening",
-    "deflation": "holding",
-    "liquidity": "holding",
-    "stablecoins": "holding"
-   },
-   "values": {
-    "demand": -0.04632055456310191,
-    "pricing": 13.645233787645171,
-    "capture": 0.17820063270124023,
-    "deflation": 0.11213916234299635,
-    "liquidity": -0.027818849336925022,
-    "stablecoins": 0.053916528788506835
-   },
-   "coverage": 0.11213916234299635,
-   "vol30": 2008488856
-  },
-  {
-   "ts": 1787097600,
-   "date": "2026-08-19",
+   "ts": 1786579200,
+   "date": "2026-08-13",
    "verdict": "weakening",
    "claims": {
     "demand": "weakening",
@@ -711,22 +688,45 @@
     "capture": "weakening",
     "deflation": "weakening",
     "liquidity": "holding",
+    "stablecoins": "holding"
+   },
+   "values": {
+    "demand": -0.08505729492994618,
+    "pricing": 13.393091301199666,
+    "capture": 0.17464567196437766,
+    "deflation": 0.1039364729259033,
+    "liquidity": 0.009643919375538434,
+    "stablecoins": 0.05615889468908586
+   },
+   "coverage": 0.1039364729259033,
+   "vol30": 1979486991
+  },
+  {
+   "ts": 1787184000,
+   "date": "2026-08-20",
+   "verdict": "weakening",
+   "claims": {
+    "demand": "weakening",
+    "pricing": "holding",
+    "capture": "weakening",
+    "deflation": "holding",
+    "liquidity": "holding",
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": -0.042895441084189634,
-    "pricing": 12.84928900375924,
-    "capture": 0.1878386209665889,
-    "deflation": 0.1166203359150541,
-    "liquidity": -0.0225156498517175,
-    "stablecoins": -0.03835073335144423
+    "demand": -0.056843834596887244,
+    "pricing": 12.833194903432037,
+    "capture": 0.19195262371764624,
+    "deflation": 0.110583489693409,
+    "liquidity": 0.01806884223671479,
+    "stablecoins": -0.038485719060749934
    },
-   "coverage": 0.1166203359150541,
-   "vol30": 2046637755
+   "coverage": 0.110583489693409,
+   "vol30": 2075826807
   },
   {
-   "ts": 1787702400,
-   "date": "2026-08-26",
+   "ts": 1787788800,
+   "date": "2026-08-27",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
@@ -737,42 +737,42 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": 0.19367592961160351,
-    "pricing": 13.631394212480911,
-    "capture": 0.18760688434973405,
-    "deflation": 0.1294759402312787,
-    "liquidity": 0.1868949302540195,
-    "stablecoins": -0.019871328279557954
+    "demand": 0.2085979505829234,
+    "pricing": 13.699066495866344,
+    "capture": 0.18597267123150138,
+    "deflation": 0.13447385662335692,
+    "liquidity": 0.26402712439700915,
+    "stablecoins": -0.023938181233183475
    },
-   "coverage": 0.1294759402312787,
-   "vol30": 2555366638
+   "coverage": 0.13447385662335692,
+   "vol30": 2617457183
   },
   {
-   "ts": 1788307200,
-   "date": "2026-09-02",
-   "verdict": "holding",
+   "ts": 1788393600,
+   "date": "2026-09-03",
+   "verdict": "weakening",
    "claims": {
     "demand": "holding",
     "pricing": "holding",
     "capture": "weakening",
-    "deflation": "holding",
+    "deflation": "weakening",
     "liquidity": "holding",
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": 0.41023016299385295,
-    "pricing": 13.570764908225254,
-    "capture": 0.19028727567674072,
-    "deflation": 0.14956336552126123,
-    "liquidity": 0.2539086652937792,
-    "stablecoins": -0.09668458248119471
+    "demand": 0.4577978097986879,
+    "pricing": 13.451139893225593,
+    "capture": 0.197957341792892,
+    "deflation": 0.15768030230835858,
+    "liquidity": 0.2609777996412288,
+    "stablecoins": -0.09284956106197928
    },
-   "coverage": 0.14956336552126123,
-   "vol30": 2887175503
+   "coverage": 0.15768030230835858,
+   "vol30": 2999190427
   },
   {
-   "ts": 1788912000,
-   "date": "2026-09-09",
+   "ts": 1788998400,
+   "date": "2026-09-10",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
@@ -783,19 +783,19 @@
     "stablecoins": "weakening"
    },
    "values": {
-    "demand": 0.7440604051629678,
-    "pricing": 13.272962413743361,
-    "capture": 0.21792398533772425,
-    "deflation": 0.1598170666974673,
-    "liquidity": 0.4937081286588436,
-    "stablecoins": -0.10650728229364947
+    "demand": 0.7510877453338307,
+    "pricing": 13.307423008210469,
+    "capture": 0.21647020731037714,
+    "deflation": 0.15120604993871856,
+    "liquidity": 0.5305352745428771,
+    "stablecoins": -0.09300020788335439
    },
-   "coverage": 0.1598170666974673,
-   "vol30": 3459810144
+   "coverage": 0.15120604993871856,
+   "vol30": 3532339054
   },
   {
-   "ts": 1789516800,
-   "date": "2026-09-16",
+   "ts": 1789603200,
+   "date": "2026-09-17",
    "verdict": "weakening",
    "claims": {
     "demand": "holding",
@@ -806,19 +806,19 @@
     "stablecoins": "broken"
    },
    "values": {
-    "demand": 0.999387771455889,
-    "pricing": 13.721661392115857,
-    "capture": 0.214454648492361,
-    "deflation": 0.18146752220754472,
-    "liquidity": 0.5402441724103393,
-    "stablecoins": -0.28522872304859703
+    "demand": 1.0718212234314644,
+    "pricing": 14.142039296795147,
+    "capture": 0.21181021944701853,
+    "deflation": 0.17215413013422534,
+    "liquidity": 0.6195460153926744,
+    "stablecoins": -0.30256184542620357
    },
-   "coverage": 0.18146752220754472,
-   "vol30": 3872083597
+   "coverage": 0.17215413013422534,
+   "vol30": 4094632944
   },
   {
-   "ts": 1790121600,
-   "date": "2026-09-23",
+   "ts": 1790208000,
+   "date": "2026-09-24",
    "verdict": "weakening",
    "claims": {
     "demand": "holding",
@@ -829,19 +829,19 @@
     "stablecoins": "broken"
    },
    "values": {
-    "demand": 0.8581199729141049,
-    "pricing": 14.778801023664467,
-    "capture": 0.23261587915812887,
-    "deflation": 0.12955249743170483,
-    "liquidity": 0.8562614826773853,
-    "stablecoins": -0.29378763784093853
+    "demand": 0.7987383382981601,
+    "pricing": 14.847414098934765,
+    "capture": 0.237872667907638,
+    "deflation": 0.13074968792203592,
+    "liquidity": 0.8491314136195922,
+    "stablecoins": -0.302525884656755
    },
-   "coverage": 0.12955249743170483,
-   "vol30": 4441463140
+   "coverage": 0.13074968792203592,
+   "vol30": 4472132289
   },
   {
-   "ts": 1790726400,
-   "date": "2026-09-30",
+   "ts": 1790812800,
+   "date": "2026-10-01",
    "verdict": "weakening",
    "claims": {
     "demand": "holding",
@@ -852,19 +852,19 @@
     "stablecoins": "broken"
    },
    "values": {
-    "demand": 0.7649128733136736,
-    "pricing": 15.252234132812669,
-    "capture": 0.25110090485779557,
-    "deflation": 0.13576531391653007,
-    "liquidity": 1.103830620709544,
-    "stablecoins": -0.20674996133929768
+    "demand": 0.7032359576885514,
+    "pricing": 15.466262387143468,
+    "capture": 0.25447126537952597,
+    "deflation": 0.12898145227912108,
+    "liquidity": 1.0645278446434965,
+    "stablecoins": -0.2157251665666401
    },
-   "coverage": 0.13576531391653007,
-   "vol30": 4803094377
+   "coverage": 0.12898145227912108,
+   "vol30": 4796810512
   },
   {
-   "ts": 1791331200,
-   "date": "2026-10-07",
+   "ts": 1791417600,
+   "date": "2026-10-08",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
@@ -875,19 +875,19 @@
     "stablecoins": "holding"
    },
    "values": {
-    "demand": 0.39084628458745807,
-    "pricing": 16.890997317749015,
-    "capture": 0.25612850624960654,
-    "deflation": 0.14257149507496591,
-    "liquidity": 0.6367073515153583,
-    "stablecoins": 0.12633102453939782
+    "demand": 0.4094020522670285,
+    "pricing": 16.953006003607168,
+    "capture": 0.25860721680673787,
+    "deflation": 0.14025761931172773,
+    "liquidity": 0.6503700086202542,
+    "stablecoins": 0.16196437221016802
    },
-   "coverage": 0.14257149507496591,
-   "vol30": 4551444687
+   "coverage": 0.14025761931172773,
+   "vol30": 4702771885
   },
   {
-   "ts": 1791936000,
-   "date": "2026-10-14",
+   "ts": 1792022400,
+   "date": "2026-10-15",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
@@ -898,22 +898,22 @@
     "stablecoins": "holding"
    },
    "values": {
-    "demand": 0.2906532864625053,
-    "pricing": 17.033178071438314,
-    "capture": 0.2830906571426976,
-    "deflation": 0.16909871183053404,
-    "liquidity": 0.6355658350816535,
-    "stablecoins": 0.1281270174925948
+    "demand": 0.25491999001181775,
+    "pricing": 17.089329703671087,
+    "capture": 0.29985687609855205,
+    "deflation": 0.19554908288119996,
+    "liquidity": 0.5224577283697311,
+    "stablecoins": 0.13419413401138125
    },
-   "coverage": 0.16909871183053404,
-   "vol30": 4835798678
+   "coverage": 0.19554908288119996,
+   "vol30": 4803974259
   },
   {
-   "ts": 1792540800,
-   "date": "2026-10-21",
+   "ts": 1792627200,
+   "date": "2026-10-22",
    "verdict": "holding",
    "claims": {
-    "demand": "holding",
+    "demand": "weakening",
     "pricing": "holding",
     "capture": "holding",
     "deflation": "holding",
@@ -921,19 +921,19 @@
     "stablecoins": "holding"
    },
    "values": {
-    "demand": 0.02132493550359693,
-    "pricing": 16.513103210784408,
-    "capture": 0.3176137599666409,
-    "deflation": 0.17072269471563786,
-    "liquidity": 0.16084178009365058,
-    "stablecoins": 0.1837164832039604
+    "demand": -0.02562899891839554,
+    "pricing": 16.27954416746756,
+    "capture": 0.3208313110173468,
+    "deflation": 0.16342439169401515,
+    "liquidity": 0.17268433020436502,
+    "stablecoins": 0.19154866873115606
    },
-   "coverage": 0.17072269471563786,
-   "vol30": 4350995030
+   "coverage": 0.16342439169401515,
+   "vol30": 4260019770
   },
   {
-   "ts": 1793145600,
-   "date": "2026-10-28",
+   "ts": 1793232000,
+   "date": "2026-10-29",
    "verdict": "holding",
    "claims": {
     "demand": "weakening",
@@ -944,19 +944,19 @@
     "stablecoins": "holding"
    },
    "values": {
-    "demand": -0.13948035317283503,
-    "pricing": 15.926244309080255,
-    "capture": 0.3404862542122809,
-    "deflation": 0.1717937322778032,
-    "liquidity": -0.22198481349088472,
-    "stablecoins": 0.18930216977243775
+    "demand": -0.18093558428063006,
+    "pricing": 15.8191129775378,
+    "capture": 0.3525292877501666,
+    "deflation": 0.17909544095586585,
+    "liquidity": -0.16187615869981076,
+    "stablecoins": 0.1944038007531781
    },
-   "coverage": 0.1717937322778032,
-   "vol30": 3965443376
+   "coverage": 0.17909544095586585,
+   "vol30": 3893483161
   },
   {
-   "ts": 1793750400,
-   "date": "2026-11-04",
+   "ts": 1793836800,
+   "date": "2026-11-05",
    "verdict": "holding",
    "claims": {
     "demand": "weakening",
@@ -967,19 +967,19 @@
     "stablecoins": "holding"
    },
    "values": {
-    "demand": -0.12255720475450649,
-    "pricing": 15.316889717962752,
-    "capture": 0.32550776271801535,
-    "deflation": 0.19591304892875205,
-    "liquidity": -0.11012736028949577,
-    "stablecoins": 0.005505306187927328
+    "demand": -0.11864829799304899,
+    "pricing": 15.30700803912373,
+    "capture": 0.3251165574031131,
+    "deflation": 0.1846036385824838,
+    "liquidity": -0.1353710611994029,
+    "stablecoins": 0.002654286746055723
    },
-   "coverage": 0.19591304892875205,
-   "vol30": 3997411428
+   "coverage": 0.1846036385824838,
+   "vol30": 4002196892
   },
   {
-   "ts": 1794355200,
-   "date": "2026-11-11",
+   "ts": 1794441600,
+   "date": "2026-11-12",
    "verdict": "holding",
    "claims": {
     "demand": "weakening",
@@ -990,19 +990,19 @@
     "stablecoins": "holding"
    },
    "values": {
-    "demand": -0.2169843711829652,
-    "pricing": 16.05700347695168,
-    "capture": 0.3004016731876388,
-    "deflation": 0.18513836209182016,
-    "liquidity": -0.23465941817521163,
-    "stablecoins": 0.028162237710536164
+    "demand": -0.21562608558123864,
+    "pricing": 16.027843268520073,
+    "capture": 0.30402416602387705,
+    "deflation": 0.19333071140736843,
+    "liquidity": -0.1570450426681067,
+    "stablecoins": 0.028260909880845286
    },
-   "coverage": 0.18513836209182016,
-   "vol30": 3731354987
+   "coverage": 0.19333071140736843,
+   "vol30": 3774153452
   },
   {
-   "ts": 1794960000,
-   "date": "2026-11-18",
+   "ts": 1795046400,
+   "date": "2026-11-19",
    "verdict": "holding",
    "claims": {
     "demand": "weakening",
@@ -1013,38 +1013,38 @@
     "stablecoins": "holding"
    },
    "values": {
-    "demand": -0.1209724995502095,
-    "pricing": 17.48881591851229,
-    "capture": 0.2466573596329837,
-    "deflation": 0.18582279017553277,
-    "liquidity": -0.2038708771803599,
-    "stablecoins": 0.15130569633275281
+    "demand": -0.11956606088963928,
+    "pricing": 17.34962341572013,
+    "capture": 0.2421836226834309,
+    "deflation": 0.18064259576538677,
+    "liquidity": -0.21466187274822612,
+    "stablecoins": 0.13765674756515756
    },
-   "coverage": 0.18582279017553277,
-   "vol30": 3927037732
+   "coverage": 0.18064259576538677,
+   "vol30": 3935865832
   },
   {
-   "ts": 1795564800,
-   "date": "2026-11-25",
+   "ts": 1795651200,
+   "date": "2026-11-26",
    "verdict": "holding",
    "claims": {
     "demand": "holding",
     "pricing": "holding",
     "capture": "holding",
-    "deflation": "holding",
+    "deflation": "weakening",
     "liquidity": "weakening",
     "stablecoins": "holding"
    },
    "values": {
-    "demand": 0.07624454173967865,
-    "pricing": 18.571738259336477,
-    "capture": 0.21283776304992394,
-    "deflation": 0.22168490667659013,
-    "liquidity": -0.24101634770339575,
-    "stablecoins": 0.1639388219256277
+    "demand": 0.06644694221328296,
+    "pricing": 18.306193508602092,
+    "capture": 0.2113999733499043,
+    "deflation": 0.2001876886007056,
+    "liquidity": -0.2069749619565131,
+    "stablecoins": 0.1638543957350691
    },
-   "coverage": 0.22168490667659013,
-   "vol30": 4305242131
+   "coverage": 0.2001876886007056,
+   "vol30": 4288099542
   }
  ]
 }
