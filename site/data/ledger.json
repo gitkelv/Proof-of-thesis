@@ -188,10 +188,10 @@
    "demand": "holding",
    "pricing": "holding",
    "capture": "holding",
-   "deflation": "weakening",
+   "deflation": "holding",
    "liquidity": "weakening",
    "stablecoins": "holding"
   },
-  "coverage": 0.20004651791293077
+  "coverage": 0.20154839437912614
  }
 ]
